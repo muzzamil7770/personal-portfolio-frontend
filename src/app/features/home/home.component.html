@@ -1,0 +1,391 @@
+<!-- Animated Background (Desktop Only) -->
+<div class="animated-bg" id="animated-bg" aria-hidden="true"></div>
+
+<!-- Hero Section -->
+<section id="home" class="hero">
+  <div class="container">
+    <div id="hero-content" class="hero-content">
+        <div class="hero-image-wrapper" data-aos="zoom-in-right">
+          <img [src]="siteData.hero.profileImage" [alt]="siteData.hero.firstName + ' ' + siteData.hero.lastName" class="hero-image" />
+        </div>
+
+        <div class="hero-text" data-aos="fade-left">
+          <p class="hero-greeting">{{ siteData.hero.greeting }}</p>
+          <h1 class="hero-name">
+            {{ siteData.hero.firstName }} <span class="text-accent">{{ siteData.hero.lastName }}</span>
+          </h1>
+          <h2 class="hero-title">
+            <span id="typed"></span>
+          </h2>
+          <p class="hero-description">
+            {{ siteData.hero.description }}
+          </p>
+
+          <div class="hero-buttons">
+            <a [href]="'mailto:' + siteData.hero.email" class="btn btn-primary">
+              <i class="fas fa-envelope"></i>
+              <span>Get In Touch</span>
+            </a>
+            <a href="/assets/MUZZAMIL Full Stack Web Developer.pdf" download class="btn btn-cv" (click)="openCvViewer(); $event.preventDefault()">
+              <i class="fas fa-download"></i>
+              <span>Download CV</span>
+            </a>
+            <a [href]="'https://wa.me/' + siteData.hero.whatsapp" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+              <i class="fab fa-whatsapp"></i>
+              <span>WhatsApp</span>
+            </a>
+            <a [href]="'https://www.linkedin.com/in/' + siteData.hero.linkedin" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+              <i class="fab fa-linkedin"></i>
+              <span>LinkedIn</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">About Me</h2>
+        <p>Discover my journey, passion, and expertise in frontend development</p>
+      </div>
+      <div class="card card-accent" data-aos="fade-up">
+        <div style="display: grid; gap: 1.5rem; align-items: center;">
+          <div style="display: flex; justify-content: center;">
+            <img [src]="siteData.about.profileImage" [alt]="siteData.hero.firstName + ' ' + siteData.hero.lastName"
+              style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;" />
+          </div>
+          <div>
+            <h3 style="margin-bottom: 1rem; color: var(--text-primary);">{{ siteData.about.title }}</h3>
+            <p style="margin-bottom: 1rem;">{{ siteData.about.description1 }}</p>
+            <p style="margin-bottom: 1.5rem;">{{ siteData.about.description2 }}</p>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+              @for (stat of siteData.about.stats; track stat.label) {
+                <div style="text-align: center;">
+                  <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">{{ stat.value }}</div>
+                  <div style="font-size: 0.8125rem; color: var(--text-muted);">{{ stat.label }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Technical Skills</h2>
+        <p>Proficiency in modern web technologies and frameworks</p>
+      </div>
+      <div id="skills-content" class="skills-grid">
+        @for (skill of siteData.skills; track skill.name) {
+          <div class="skill-card" data-aos="fade-up">
+            <div class="skill-header">
+              <span class="skill-name">{{ skill.name }}</span>
+              <span class="skill-percent">{{ skill.level }}%</span>
+            </div>
+            <div class="skill-bar">
+              <div class="skill-fill" [attr.data-width]="skill.level" style="width: 0%;"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Professional Experience</h2>
+        <p>My journey through various roles and responsibilities</p>
+      </div>
+      <div id="experience-content" class="experience-list">
+        @for (exp of siteData.experience; track exp.title) {
+          <div class="experience-card" data-aos="fade-up">
+            <div class="experience-header">
+              <h3 class="experience-title">{{ exp.title }}</h3>
+              <span class="experience-period">{{ exp.period }}</span>
+            </div>
+            <p class="experience-company">{{ exp.company }} - {{ exp.location }}</p>
+            <p class="experience-description">{{ exp.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Education Section -->
+  <section id="education">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Education & Certifications</h2>
+        <p>Academic background and professional development</p>
+      </div>
+      <div id="education-content" class="experience-list">
+        @for (edu of siteData.education; track edu.degree) {
+          <div class="experience-card" data-aos="fade-up">
+            <div class="experience-header">
+              <h3 class="experience-title">{{ edu.degree }}</h3>
+              <span class="experience-period">{{ edu.period }}</span>
+            </div>
+            <p class="experience-company">{{ edu.institution }} - {{ edu.grade }}</p>
+            <p class="experience-description">{{ edu.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Professional Services</h2>
+        <p>Comprehensive frontend development solutions for your business needs</p>
+      </div>
+      <div id="services-content" class="services-grid">
+        @for (service of siteData.services; track service.title) {
+          <div class="service-card" data-aos="fade-up">
+            <div class="service-icon">
+              <i [class]="service.icon"></i>
+            </div>
+            <h3 class="service-title">{{ service.title }}</h3>
+            <p class="service-description">{{ service.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section id="projects">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Featured Projects</h2>
+        <p>Showcase of my recent work and technical achievements</p>
+      </div>
+      <div id="projects-content" class="projects-grid">
+        <!-- Portfolio Project Card (this project) -->
+        <div class="project-card portfolio-self-card" data-aos="fade-up" (click)="openPortfolioSidebar()" style="cursor: pointer;">
+          <div class="project-image-wrapper">
+            <div class="portfolio-card-banner">
+              <i class="fab fa-angular"></i>
+              <i class="fas fa-plus portfolio-plus"></i>
+              <i class="fas fa-server"></i>
+            </div>
+            <div class="project-image-overlay">
+              <div class="project-preview-icon"><i class="fas fa-expand"></i></div>
+            </div>
+          </div>
+          <div class="project-content">
+            <h3 class="project-title">Personal Portfolio — This Project</h3>
+            <p class="project-description">Full-stack portfolio app with Angular 17 frontend, Express.js backend, JWT + 2FA admin auth, rate-limited email API, analytics, and CV download.</p>
+            <div class="project-tech">
+              <span>Angular 17</span><span>Express.js</span><span>JWT</span><span>Nodemailer</span>
+            </div>
+            <button class="project-link" (click)="openPortfolioSidebar(); $event.stopPropagation()">
+              View Details <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        @for (project of siteData.projects; track project.id) {
+          <div class="project-card" data-aos="fade-up" (click)="openProjectPreview(project.id)" style="cursor: pointer;">
+            <div class="project-image-wrapper">
+              <img [src]="project.image" [alt]="project.title" class="project-image" />
+              <div class="project-image-overlay">
+                <div class="project-preview-icon">
+                  <i class="fas fa-expand"></i>
+                </div>
+              </div>
+            </div>
+            <div class="project-content">
+              <h3 class="project-title">{{ project.title }}</h3>
+              <p class="project-description">{{ project.description }}</p>
+              <div class="project-tech">
+                @for (tech of project.techs; track tech) {
+                  <span>{{ tech }}</span>
+                }
+              </div>
+              <button class="project-link" (click)="openProjectModal(project.id); $event.stopPropagation()">
+                View Details <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Client Testimonials</h2>
+        <p>What clients say about working with me</p>
+      </div>
+      <div id="testimonials-content" class="testimonials-grid">
+        @for (testimonial of siteData.testimonials; track testimonial.name) {
+          <div class="testimonial-card" data-aos="fade-up">
+            <div class="testimonial-quote">"</div>
+            <p class="testimonial-text">{{ testimonial.quote }}</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar" [style.background]="'linear-gradient(135deg, ' + testimonial.colorFrom + ', ' + testimonial.colorTo + ')'">
+                {{ testimonial.initials }}
+              </div>
+              <div style="text-align: left;">
+                <div class="testimonial-name">{{ testimonial.name }}</div>
+                <div class="testimonial-role">{{ testimonial.role }}</div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section id="blog">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Latest Blog Posts</h2>
+        <p>Insights, tutorials, and thoughts on modern web development</p>
+      </div>
+      <div id="blog-content" class="blog-grid">
+        @for (post of siteData.blog; track post.id) {
+          <div class="blog-card" data-aos="fade-up" (click)="openBlogModal(post.id)" style="cursor: pointer;">
+            <img [src]="post.image" [alt]="post.title" class="blog-image" />
+            <div class="blog-content">
+              <p class="blog-date">{{ post.date }}</p>
+              <h3 class="blog-title">{{ post.title }}</h3>
+              <p class="blog-excerpt">{{ post.excerpt }}</p>
+              <button class="blog-link" (click)="openBlogModal(post.id); $event.stopPropagation()">
+                Read More <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <div class="container" data-aos="fade-up">
+      <div class="section-header">
+        <h2 class="text-accent">Let's Work Together</h2>
+        <p>Ready to bring your ideas to life? Let's discuss your project and create something amazing together.</p>
+      </div>
+      <div id="contact-content" class="contact-grid">
+        <div class="contact-info" data-aos="fade-right">
+          <h3 class="contact-info-title">Get In Touch</h3>
+          <p class="contact-info-text">
+            I'm always excited to work on new projects and collaborate with amazing people.
+            Whether you need a complete website, want to improve your existing application,
+            or just have questions about web development, I'm here to help.
+          </p>
+
+          <div class="contact-items">
+            <div class="contact-item">
+              <div class="contact-item-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <div class="contact-item-label">Email</div>
+                <a [href]="'mailto:' + siteData.contact.email" class="contact-item-value">{{ siteData.contact.email }}</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;">
+                <i class="fab fa-whatsapp"></i>
+              </div>
+              <div>
+                <div class="contact-item-label">WhatsApp</div>
+                <a [href]="'https://wa.me/' + siteData.contact.whatsappLink" class="contact-item-value">{{ siteData.contact.whatsapp }}</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">
+                <i class="fab fa-linkedin"></i>
+              </div>
+              <div>
+                <div class="contact-item-label">LinkedIn</div>
+                <a [href]="'https://www.linkedin.com/in/' + siteData.contact.linkedinUrl" class="contact-item-value">{{ siteData.contact.linkedin }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="submitContactForm()" data-aos="fade-left">
+          <div class="form-group">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" id="name" formControlName="name" class="form-input" [class.is-invalid]="isContactInvalid('name')" placeholder="Enter your full name" />
+            @if (isContactInvalid('name')) {
+              <small class="field-error">
+                @if (contactForm.get('name')?.errors?.['required']) { Name is required. }
+                @else if (contactForm.get('name')?.errors?.['minlength']) { Name must be at least 2 characters. }
+              </small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" id="email" formControlName="email" class="form-input" [class.is-invalid]="isContactInvalid('email')" placeholder="your.email@example.com" />
+            @if (isContactInvalid('email')) {
+              <small class="field-error">
+                @if (contactForm.get('email')?.errors?.['required']) { Email is required. }
+                @else if (contactForm.get('email')?.errors?.['email']) { Please enter a valid email address. }
+              </small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="subject" class="form-label">Subject</label>
+            <input type="text" id="subject" formControlName="subject" class="form-input" [class.is-invalid]="isContactInvalid('subject')" placeholder="Project inquiry, collaboration, etc." />
+            @if (isContactInvalid('subject')) {
+              <small class="field-error">
+                @if (contactForm.get('subject')?.errors?.['required']) { Subject is required. }
+                @else if (contactForm.get('subject')?.errors?.['minlength']) { Subject must be at least 5 characters. }
+              </small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="message" class="form-label">Message</label>
+            <textarea id="message" formControlName="message" class="form-input" [class.is-invalid]="isContactInvalid('message')" placeholder="Tell me about your project, timeline, and requirements..."></textarea>
+            @if (isContactInvalid('message')) {
+              <small class="field-error">
+                @if (contactForm.get('message')?.errors?.['required']) { Message is required. }
+                @else if (contactForm.get('message')?.errors?.['minlength']) { Please provide at least 10 characters. }
+              </small>
+            }
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="isSubmitting || contactForm.invalid">
+            @if (isSubmitting) {
+              <i class="fas fa-spinner fa-spin"></i>
+              <span>Sending...</span>
+            } @else {
+              <i class="fas fa-paper-plane"></i>
+              <span>Send Message</span>
+            }
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CV Viewer Overlay -->
+  <app-cv-viewer
+    *ngIf="showCvViewer"
+    (closed)="onCvViewerClosed()"
+  ></app-cv-viewer>

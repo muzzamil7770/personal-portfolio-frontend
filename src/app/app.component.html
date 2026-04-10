@@ -1,0 +1,25 @@
+<!-- Portfolio Shell — hidden on /admin routes -->
+<ng-container *ngIf="!isAdmin">
+  <app-navbar></app-navbar>
+  <app-mobile-menu></app-mobile-menu>
+  <app-scroll-progress></app-scroll-progress>
+  <app-nav-arrows></app-nav-arrows>
+  <app-scroll-to-top></app-scroll-to-top>
+</ng-container>
+
+<router-outlet></router-outlet>
+
+<ng-container *ngIf="!isAdmin">
+  <app-footer></app-footer>
+  <app-project-modal></app-project-modal>
+  <app-blog-modal></app-blog-modal>
+  <app-hire-me-modal></app-hire-me-modal>
+  <app-project-preview-modal></app-project-preview-modal>
+  <app-upwork-widget></app-upwork-widget>
+  <app-toast></app-toast>
+  <app-admin-panel-strip></app-admin-panel-strip>
+  <app-portfolio-project-sidebar></app-portfolio-project-sidebar>
+</ng-container>
+
+<!-- Global Cooldown Overlay -->
+<app-cooldown-overlay></app-cooldown-overlay>

@@ -1,0 +1,17 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/portfolio",
+  "routes": [
+    {
+      "src": "/(.*)\\.(js|css|ico|png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|eot|json|txt|xml|pdf|ico|svg|map)$",
+      "dest": "/$1.$2"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "github": {
+    "silent": true
+  }
+}
