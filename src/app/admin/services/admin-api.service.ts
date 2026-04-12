@@ -90,7 +90,13 @@ export class AdminApiService {
   getLiveCount(): Observable<{ success: boolean; watching: number }> {
     return this.http.get<any>(`${this.base}/analytics/live`);
   }
-  trackVisit(body: { sessionId: string; page: string; referrer: string; userAgent: string }): Observable<any> {
+  trackVisit(body: {
+    sessionId: string; page: string; referrer: string; userAgent: string;
+    browser?: string; browserVersion?: string; os?: string; osVersion?: string;
+    device?: string; screenWidth?: number; screenHeight?: number;
+    language?: string; timezone?: string; colorDepth?: number;
+    cookiesEnabled?: boolean; doNotTrack?: string; connectionType?: string;
+  }): Observable<any> {
     return this.http.post(`${this.base}/analytics/track`, body);
   }
 }

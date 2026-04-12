@@ -1,176 +1,95 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../services/admin-api.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { CooldownService } from '../../core/services/cooldown.service';
-import Swal from 'sweetalert2';
+
+interface FlowNode {
+  id: string;
+  label: string;
+  icon: string;
+  type: 'frontend' | 'backend' | 'database' | 'auth' | 'service';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  details: string[];
+}
+
+interface FlowConnection {
+  from: string;
+  to: string;
+  label: string;
+  method?: string;
+  color: string;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  duration: number;
+}
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  template: `
-    <div class="login-wrap">
-
-      <!-- Top bar: theme toggle + back to portfolio -->
-      <div class="login-topbar">
-        <a class="back-btn" routerLink="/" title="Back to Portfolio">
-          <i class="fas fa-arrow-left"></i>
-          <span>Back to Portfolio</span>
-        </a>
-        <div class="theme-toggle" (click)="themeService.toggleTheme()" title="Toggle theme" role="button">
-          <div class="theme-toggle-circle"><i class="fas fa-moon"></i></div>
-        </div>
-      </div>
-
-      <div class="login-card">
-        <div class="login-icon">
-          <i class="fas fa-shield-alt"></i>
-        </div>
-        <h2>Admin Portal</h2>
-        <p class="subtitle">Portfolio Management System</p>
-
-        <form (ngSubmit)="login()">
-          <div class="field">
-            <label>Username</label>
-            <div class="input-wrap">
-              <i class="fas fa-user input-icon"></i>
-              <input type="text" [(ngModel)]="username" name="username" placeholder="Enter username" required autocomplete="username" />
-            </div>
-          </div>
-          <div class="field">
-            <label>Password</label>
-            <div class="input-wrap">
-              <i class="fas fa-lock input-icon"></i>
-              <input [type]="showPass ? 'text' : 'password'" [(ngModel)]="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
-              <button type="button" class="pass-toggle" (click)="showPass = !showPass" tabindex="-1">
-                <i [class]="showPass ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-              </button>
-            </div>
-          </div>
-          <p class="error" *ngIf="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</p>
-          <button type="submit" class="submit-btn" [disabled]="loading">
-            <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
-            <i class="fas fa-sign-in-alt" *ngIf="!loading"></i>
-            {{ loading ? 'Verifying...' : 'Login' }}
-          </button>
-        </form>
-
-        <div class="login-divider"><span>or</span></div>
-        <a class="portfolio-link" routerLink="/">
-          <i class="fas fa-globe"></i>
-          View Portfolio
-        </a>
-      </div>
-    </div>
-  `,
-  styles: [`
-    .login-wrap {
-      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-      justify-content: center; background: var(--bg-primary); padding: 1rem;
-      position: relative;
-    }
-    .login-topbar {
-      position: fixed; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.875rem 1.5rem;
-      background: var(--bg-nav); border-bottom: 1px solid var(--border-light);
-      backdrop-filter: blur(12px); z-index: 100;
-    }
-    .back-btn {
-      display: flex; align-items: center; gap: 8px;
-      color: var(--text-secondary); text-decoration: none; font-size: 0.875rem; font-weight: 500;
-      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);
-      transition: all 0.2s;
-    }
-    .back-btn:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-100); }
-    .theme-toggle {
-      width: 44px; height: 24px; background: var(--primary);
-      border-radius: 999px; position: relative; cursor: pointer; flex-shrink: 0;
-    }
-    .theme-toggle-circle {
-      position: absolute; top: 2px; left: 2px;
-      width: 20px; height: 20px; background: #fff; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; color: var(--primary); transition: transform 0.25s ease;
-    }
-    body.light .theme-toggle-circle { transform: translateX(20px); }
-    .login-card {
-      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;
-      padding: 2.5rem 2rem; width: 100%; max-width: 400px; text-align: center;
-      box-shadow: var(--shadow-xl); margin-top: 72px;
-    }
-    .login-icon {
-      width: 64px; height: 64px; border-radius: 16px;
-      background: var(--primary-100); color: var(--primary);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.75rem; margin: 0 auto 1rem;
-    }
-    h2 { color: var(--text-primary); margin: 0 0 4px; font-size: 1.5rem; font-weight: 700; }
-    .subtitle { color: var(--text-muted); margin: 0 0 2rem; font-size: 0.875rem; }
-    .field { margin-bottom: 1.25rem; text-align: left; }
-    label { display: block; color: var(--text-muted); font-size: 0.8rem; margin-bottom: 6px; font-weight: 600; }
-    .input-wrap { position: relative; display: flex; align-items: center; }
-    .input-icon { position: absolute; left: 12px; color: var(--text-muted); font-size: 0.875rem; pointer-events: none; }
-    input {
-      width: 100%; padding: 0.7rem 0.9rem 0.7rem 2.5rem; border-radius: 10px;
-      border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-primary);
-      font-size: 0.95rem; box-sizing: border-box; outline: none; font-family: inherit;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-100); }
-    input::placeholder { color: var(--text-muted); }
-    .pass-toggle {
-      position: absolute; right: 10px; background: none; border: none;
-      color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 0.875rem;
-      transition: color 0.2s;
-    }
-    .pass-toggle:hover { color: var(--primary); }
-    .submit-btn {
-      width: 100%; padding: 0.8rem; background: var(--primary); color: #fff;
-      border: none; border-radius: 10px; font-size: 1rem; font-weight: 600;
-      cursor: pointer; margin-top: 0.5rem; display: flex; align-items: center;
-      justify-content: center; gap: 8px; transition: opacity 0.2s, transform 0.2s;
-    }
-    .submit-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .error {
-      color: #f87171; font-size: 0.85rem; margin: -0.5rem 0 0.75rem; text-align: left;
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
-      padding: 8px 12px; border-radius: 8px;
-    }
-    .login-divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 1.5rem 0 1rem; color: var(--text-muted); font-size: 0.8rem;
-    }
-    .login-divider::before, .login-divider::after {
-      content: ''; flex: 1; height: 1px; background: var(--border-color);
-    }
-    .portfolio-link {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 0.7rem; border-radius: 10px;
-      border: 1px solid var(--border-color); color: var(--text-secondary);
-      text-decoration: none; font-size: 0.9rem; font-weight: 500;
-      transition: all 0.2s;
-    }
-    .portfolio-link:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-100); }
-    .portfolio-link i { color: var(--primary); }
-  `]
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
+  // Login form state
   username = '';
   password = '';
   showPass = false;
   error = '';
   loading = false;
 
-  constructor(private api: AdminApiService, private router: Router, public themeService: ThemeService, private cooldown: CooldownService) {}
+  // 2FA state
+  show2FA = false;
+  tfaCode = '';
+  tfaError = '';
+  tfaLoading = false;
+  resending = false;
+
+  // Flow diagram state
+  animationActive = true;
+  svgViewBox = '0 0 1400 900';
+  flowNodes: FlowNode[] = [];
+  flowConnections: FlowConnection[] = [];
+  visibleConnections: FlowConnection[] = [];
+  draggingNode: FlowNode | null = null;
+  dragOffset = { x: 0, y: 0 };
+  particles: Particle[] = [];
+  animationFrameId: number | null = null;
+
+  // Fullscreen viewer state
+  showFullscreenViewer = false;
+  viewerZoom = 1;
+  viewerPanX = 0;
+  viewerPanY = 0;
+  isViewerDragging = false;
+  viewerDragStart = { x: 0, y: 0 };
+  viewerPanStart = { x: 0, y: 0 };
+
+  @ViewChild('tfaInput') tfaInput!: ElementRef;
+  @ViewChild('fullscreenViewer') fullscreenViewer!: ElementRef;
+
+  constructor(
+    private api: AdminApiService,
+    private router: Router,
+    public themeService: ThemeService,
+    private cooldown: CooldownService,
+    private el: ElementRef
+  ) {}
 
   ngOnInit(): void {
-    // Redirect to dashboard if already authenticated
+    // Check for existing valid token
     const token = localStorage.getItem('admin_token');
     if (token) {
       try {
@@ -179,34 +98,426 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/admin/dashboard'], { replaceUrl: true });
           return;
         }
-        // Token expired, clean up
-        localStorage.removeItem('admin_auth');
-        localStorage.removeItem('admin_token');
-      } catch {
-        localStorage.removeItem('admin_auth');
-        localStorage.removeItem('admin_token');
-      }
+      } catch {}
+      localStorage.removeItem('admin_auth');
+      localStorage.removeItem('admin_token');
+    }
+
+    this.initializeFlowDiagram();
+  }
+
+  ngAfterViewInit(): void {
+    this.startAmbientAnimation();
+  }
+
+  ngOnDestroy(): void {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
     }
   }
 
+  // ═══════════════════════════════════════════
+  // FLOW DIAGRAM INITIALIZATION
+  // ═══════════════════════════════════════════
+
+  private initializeFlowDiagram(): void {
+    // Define the full-stack architecture nodes
+    this.flowNodes = [
+      {
+        id: 'user',
+        label: 'User Browser',
+        icon: '\uf0ac',
+        type: 'frontend',
+        x: 50,
+        y: 50,
+        width: 160,
+        height: 85,
+        color: '#667eea',
+        details: ['Angular 17 Frontend', 'Port: 4200', '7 Themes']
+      },
+      {
+        id: 'login',
+        label: 'Login Portal',
+        icon: '\uf023',
+        type: 'auth',
+        x: 50,
+        y: 200,
+        width: 160,
+        height: 85,
+        color: '#fa709a',
+        details: ['2FA Authentication', 'JWT Tokens', 'Rate Limiting']
+      },
+      {
+        id: 'proxy',
+        label: 'Proxy Server',
+        icon: '\uf0ac',
+        type: 'service',
+        x: 300,
+        y: 125,
+        width: 140,
+        height: 70,
+        color: '#30cfd0',
+        details: ['proxy.conf.json', 'Dev: localhost:4200']
+      },
+      {
+        id: 'express',
+        label: 'Express.js Server',
+        icon: '\uf269',
+        type: 'backend',
+        x: 500,
+        y: 100,
+        width: 180,
+        height: 85,
+        color: '#f093fb',
+        details: ['Node.js + Express', 'Port: 3000', 'Helmet + CORS']
+      },
+      {
+        id: 'auth-api',
+        label: 'Auth Endpoints',
+        icon: '\uf084',
+        type: 'auth',
+        x: 750,
+        y: 50,
+        width: 160,
+        height: 85,
+        color: '#fa709a',
+        details: ['POST /api/auth/login', 'POST /api/auth/verify-2fa', 'JWT Generation']
+      },
+      {
+        id: 'middleware',
+        label: 'Middleware Stack',
+        icon: '\uf023',
+        type: 'service',
+        x: 750,
+        y: 200,
+        width: 160,
+        height: 85,
+        color: '#30cfd0',
+        details: ['Rate Limiter', 'Joi Validation', 'Winston Logger']
+      },
+      {
+        id: 'firebase',
+        label: 'Firebase DB',
+        icon: '\uf1c0',
+        type: 'database',
+        x: 1000,
+        y: 100,
+        width: 160,
+        height: 85,
+        color: '#4facfe',
+        details: ['Firestore', 'Contacts & Hires', 'Analytics Data']
+      },
+      {
+        id: 'email',
+        label: 'Email Service',
+        icon: '\uf0e0',
+        type: 'service',
+        x: 1000,
+        y: 250,
+        width: 160,
+        height: 85,
+        color: '#30cfd0',
+        details: ['Nodemailer', '2FA OTP Delivery', 'HTML Templates']
+      },
+      {
+        id: 'admin',
+        label: 'Admin Dashboard',
+        icon: '\uf015',
+        type: 'frontend',
+        x: 50,
+        y: 400,
+        width: 160,
+        height: 85,
+        color: '#667eea',
+        details: ['CRUD Operations', 'Analytics View', 'Theme Manager']
+      },
+      {
+        id: 'contact',
+        label: 'Contact Forms',
+        icon: '\uf003',
+        type: 'service',
+        x: 300,
+        y: 350,
+        width: 140,
+        height: 70,
+        color: '#30cfd0',
+        details: ['POST /api/contact', 'Daily IP Limit', 'Email Notifications']
+      },
+      {
+        id: 'hire',
+        label: 'Hire Requests',
+        icon: '\uf0b1',
+        type: 'service',
+        x: 500,
+        y: 350,
+        width: 140,
+        height: 90,
+        color: '#30cfd0',
+        details: ['POST /api/hire', 'Firestore Storage', 'Admin CRUD']
+      },
+      {
+        id: 'analytics',
+        label: 'Analytics',
+        icon: '\uf080',
+        type: 'service',
+        x: 750,
+        y: 350,
+        width: 160,
+        height: 85,
+        color: '#30cfd0',
+        details: ['Real-time Tracking', 'Heartbeat 30s', 'Live Visitors']
+      },
+      {
+        id: 'rtdb',
+        label: 'Realtime DB',
+        icon: '\uf1c0',
+        type: 'database',
+        x: 1000,
+        y: 450,
+        width: 160,
+        height: 85,
+        color: '#4facfe',
+        details: ['Firebase RTDB', 'Presence System', 'Live Sync']
+      },
+      {
+        id: 'cv',
+        label: 'CV Service',
+        icon: '\uf15b',
+        type: 'service',
+        x: 300,
+        y: 550,
+        width: 140,
+        height: 70,
+        color: '#30cfd0',
+        details: ['SSE Streaming', 'Base64 Progress', 'PDF Download']
+      },
+      {
+        id: 'portfolio',
+        label: 'Portfolio SPA',
+        icon: '\uf0ac',
+        type: 'frontend',
+        x: 50,
+        y: 650,
+        width: 160,
+        height: 85,
+        color: '#667eea',
+        details: ['10 Sections', 'GSAP + Three.js', 'Responsive Design']
+      }
+    ];
+
+    // Define connections between nodes
+    this.flowConnections = [
+      { from: 'user', to: 'login', label: 'Navigation', color: '#667eea' },
+      { from: 'login', to: 'proxy', label: 'API Calls', color: '#667eea' },
+      { from: 'proxy', to: 'express', label: 'Forward', method: 'HTTP', color: '#30cfd0' },
+      { from: 'express', to: 'auth-api', label: 'Route', color: '#f093fb' },
+      { from: 'express', to: 'middleware', label: 'Process', color: '#f093fb' },
+      { from: 'auth-api', to: 'firebase', label: 'Store Session', color: '#fa709a' },
+      { from: 'auth-api', to: 'email', label: 'Send OTP', color: '#fa709a' },
+      { from: 'express', to: 'contact', label: 'Contact API', color: '#f093fb' },
+      { from: 'express', to: 'hire', label: 'Hire API', color: '#f093fb' },
+      { from: 'express', to: 'analytics', label: 'Tracking', color: '#f093fb' },
+      { from: 'contact', to: 'firebase', label: 'Save Data', color: '#30cfd0' },
+      { from: 'hire', to: 'firebase', label: 'Save Data', color: '#30cfd0' },
+      { from: 'analytics', to: 'rtdb', label: 'Live Data', color: '#30cfd0' },
+      { from: 'user', to: 'portfolio', label: 'Browse', color: '#667eea' },
+      { from: 'portfolio', to: 'contact', label: 'Submit Form', color: '#667eea' },
+      { from: 'portfolio', to: 'hire', label: 'Submit Request', color: '#667eea' },
+      { from: 'portfolio', to: 'cv', label: 'Download CV', color: '#667eea' },
+      { from: 'user', to: 'admin', label: 'After Auth', color: '#667eea' },
+      { from: 'admin', to: 'express', label: 'CRUD + Stats', method: 'JWT', color: '#667eea' }
+    ];
+
+    this.visibleConnections = [...this.flowConnections];
+
+    // Generate floating particles
+    this.particles = Array.from({ length: 30 }, (_, i) => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 4 + 2,
+      delay: Math.random() * 5,
+      duration: Math.random() * 10 + 10
+    }));
+  }
+
+  // ═══════════════════════════════════════════
+  // DRAG AND DROP FUNCTIONALITY
+  // ═══════════════════════════════════════════
+
+  startDrag(event: MouseEvent, node: FlowNode): void {
+    event.preventDefault();
+    this.draggingNode = node;
+    const svg = this.el.nativeElement.querySelector('.flow-svg') as SVGSVGElement;
+    if (!svg) return;
+    
+    const pt = svg.createSVGPoint();
+    pt.x = event.clientX;
+    pt.y = event.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    
+    const svgP = pt.matrixTransform(ctm.inverse());
+    this.dragOffset.x = svgP.x - node.x;
+    this.dragOffset.y = svgP.y - node.y;
+  }
+
+  onDrag(event: MouseEvent): void {
+    if (!this.draggingNode) return;
+    const svg = this.el.nativeElement.querySelector('.flow-svg') as SVGSVGElement;
+    if (!svg) return;
+    
+    const pt = svg.createSVGPoint();
+    pt.x = event.clientX;
+    pt.y = event.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    
+    const svgP = pt.matrixTransform(ctm.inverse());
+    this.draggingNode.x = Math.max(0, Math.min(1400 - this.draggingNode.width, svgP.x - this.dragOffset.x));
+    this.draggingNode.y = Math.max(0, Math.min(900 - this.draggingNode.height, svgP.y - this.dragOffset.y));
+  }
+
+  endDrag(): void {
+    this.draggingNode = null;
+  }
+
+  startDragTouch(event: TouchEvent, node: FlowNode): void {
+    event.preventDefault();
+    this.draggingNode = node;
+    const touch = event.touches[0];
+    const svg = this.el.nativeElement.querySelector('.flow-svg') as SVGSVGElement;
+    if (!svg) return;
+    
+    const pt = svg.createSVGPoint();
+    pt.x = touch.clientX;
+    pt.y = touch.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    
+    const svgP = pt.matrixTransform(ctm.inverse());
+    this.dragOffset.x = svgP.x - node.x;
+    this.dragOffset.y = svgP.y - node.y;
+  }
+
+  onDragTouch(event: TouchEvent): void {
+    if (!this.draggingNode) return;
+    const touch = event.touches[0];
+    const svg = this.el.nativeElement.querySelector('.flow-svg') as SVGSVGElement;
+    if (!svg) return;
+    
+    const pt = svg.createSVGPoint();
+    pt.x = touch.clientX;
+    pt.y = touch.clientY;
+    const ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    
+    const svgP = pt.matrixTransform(ctm.inverse());
+    this.draggingNode.x = Math.max(0, Math.min(1400 - this.draggingNode.width, svgP.x - this.dragOffset.x));
+    this.draggingNode.y = Math.max(0, Math.min(900 - this.draggingNode.height, svgP.y - this.dragOffset.y));
+  }
+
+  // ═══════════════════════════════════════════
+  // SVG HELPERS
+  // ═══════════════════════════════════════════
+
+  getGradientUrl(type: string): string {
+    // Return direct gradient reference for SVG
+    const gradientMap: { [key: string]: string } = {
+      'frontend': 'url(#gradFrontend)',
+      'backend': 'url(#gradBackend)',
+      'database': 'url(#gradDatabase)',
+      'auth': 'url(#gradAuth)',
+      'service': 'url(#gradService)'
+    };
+    return gradientMap[type] || 'url(#gradFrontend)';
+  }
+
+  getGradientUrlFS(type: string): string {
+    // Return direct gradient reference for fullscreen SVG
+    const gradientMap: { [key: string]: string } = {
+      'frontend': 'url(#gradFrontendFS)',
+      'backend': 'url(#gradBackendFS)',
+      'database': 'url(#gradDatabaseFS)',
+      'auth': 'url(#gradAuthFS)',
+      'service': 'url(#gradServiceFS)'
+    };
+    return gradientMap[type] || 'url(#gradFrontendFS)';
+  }
+
+  getConnectionPath(conn: FlowConnection): string {
+    const fromNode = this.flowNodes.find(n => n.id === conn.from);
+    const toNode = this.flowNodes.find(n => n.id === conn.to);
+    if (!fromNode || !toNode) return '';
+
+    const x1 = fromNode.x + fromNode.width / 2;
+    const y1 = fromNode.y + fromNode.height / 2;
+    const x2 = toNode.x + toNode.width / 2;
+    const y2 = toNode.y + toNode.height / 2;
+
+    // Create smooth bezier curve
+    const dx = Math.abs(x2 - x1) * 0.4;
+    const dy = Math.abs(y2 - y1) * 0.4;
+    return `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+  }
+
+  getParticleDuration(conn: FlowConnection): string {
+    const fromNode = this.flowNodes.find(n => n.id === conn.from);
+    const toNode = this.flowNodes.find(n => n.id === conn.to);
+    if (!fromNode || !toNode) return '3s';
+    
+    const distance = Math.sqrt(
+      Math.pow(toNode.x - fromNode.x, 2) + Math.pow(toNode.y - fromNode.y, 2)
+    );
+    return `${Math.max(2, distance / 150)}s`;
+  }
+
+  getNodeIcon(node: FlowNode): string {
+    return node.icon;
+  }
+
+  getNodeDelay(node: FlowNode): string {
+    return `${(node.x + node.y) / 200}s`;
+  }
+
+  // ═══════════════════════════════════════════
+  // AMBIENT ANIMATION
+  // ═══════════════════════════════════════════
+
+  private startAmbientAnimation(): void {
+    const animate = () => {
+      // Subtle floating animation for nodes
+      const time = Date.now() / 1000;
+      this.flowNodes.forEach((node, i) => {
+        const baseX = node.x;
+        const floatY = Math.sin(time * 0.5 + i * 0.3) * 3;
+        // We don't modify the actual y to keep drag positions stable
+      });
+      
+      this.animationFrameId = requestAnimationFrame(animate);
+    };
+    
+    animate();
+  }
+
+  // ═══════════════════════════════════════════
+  // AUTHENTICATION METHODS
+  // ═══════════════════════════════════════════
+
   async login() {
     this.error = '';
-    
     if (!this.username || !this.password) {
       this.error = 'Please enter both username and password.';
       return;
     }
-
     this.loading = true;
-    
     try {
       const response = await this.api.login(this.username, this.password).toPromise();
-      
       if (response?.success && response.requires2FA) {
-        // Show 2FA verification modal
-        await this.show2FAVerification();
+        this.show2FA = true;
+        this.tfaCode = '';
+        this.tfaError = '';
+        setTimeout(() => this.tfaInput?.nativeElement?.focus(), 100);
       } else if (response?.success && response.token) {
-        // Direct login (fallback if 2FA is disabled)
         localStorage.setItem('admin_auth', 'true');
         localStorage.setItem('admin_token', response.token);
         this.router.navigate(['/admin/dashboard']);
@@ -218,7 +529,7 @@ export class LoginComponent implements OnInit {
       if (status === 429) {
         const retryAfter = err?.headers?.get('retry-after');
         const ms = retryAfter ? parseInt(retryAfter, 10) * 1000 : 900000;
-        this.cooldown.activate(ms, err?.error?.message || 'Too many login attempts. Please wait before trying again.');
+        this.cooldown.activate(ms, err?.error?.message || 'Too many login attempts. Please wait.');
       } else {
         this.error = err.error?.message || 'Invalid credentials. Please try again.';
       }
@@ -227,170 +538,124 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  async show2FAVerification() {
-    const { value: code } = await Swal.fire({
-      title: 'Two-Factor Authentication',
-      html: `
-        <div class="tfa-container">
-          <div class="tfa-icon-lock">🔐</div>
-          <p class="tfa-description">
-            A 6-digit verification code has been sent to your email.
-            Enter it below to complete your login.
-          </p>
-          <input
-            id="swal-2fa-code"
-            type="text"
-            maxlength="6"
-            pattern="[0-9]*"
-            inputmode="numeric"
-            class="swal2-input tfa-input"
-            placeholder="000000"
-            autofocus
-          />
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Verify & Login',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#6366f1',
-      cancelButtonColor: '#475569',
-      showLoaderOnConfirm: true,
-      preConfirm: async () => {
-        const input = document.getElementById('swal-2fa-code') as HTMLInputElement;
-        const code = input?.value;
-
-        if (!code || code.length !== 6) {
-          Swal.showValidationMessage('Please enter all 6 digits');
-          return false;
-        }
-
-        if (!/^\d+$/.test(code)) {
-          Swal.showValidationMessage('Only numeric digits allowed');
-          return false;
-        }
-
-        return code;
-      },
-      allowOutsideClick: false,
-      allowEscapeKey: true,
-      customClass: {
-        popup: 'tfa-popup',
-        title: 'tfa-title',
-        confirmButton: 'tfa-confirm-btn',
-        cancelButton: 'tfa-cancel-btn',
-        validationMessage: 'tfa-validation-msg'
-      }
-    });
-
-    if (code) {
-      await this.verify2FACode(code);
+  async submitTfa() {
+    this.tfaError = '';
+    if (this.tfaCode.length !== 6 || !/^\d+$/.test(this.tfaCode)) {
+      this.tfaError = 'Please enter a valid 6-digit code.';
+      return;
     }
-  }
-
-  async verify2FACode(code: string) {
+    this.tfaLoading = true;
     try {
-      const response = await this.api.verify2FA(code).toPromise();
-      
+      const response = await this.api.verify2FA(this.tfaCode).toPromise();
       if (response?.success && response.token) {
-        // Login successful
         localStorage.setItem('admin_auth', 'true');
         localStorage.setItem('admin_token', response.token);
-        
-        await Swal.fire({
-          icon: 'success',
-          title: 'Welcome Back!',
-          text: response.message || 'Login successful!',
-          confirmButtonColor: '#6366f1',
-          timer: 2000,
-          timerProgressBar: true,
-          showConfirmButton: false,
-          customClass: {
-            popup: 'tfa-popup',
-            title: 'tfa-title'
-          }
-        });
-        
+        this.show2FA = false;
         this.router.navigate(['/admin/dashboard']);
       } else {
-        await Swal.fire({
-          icon: 'error',
-          title: 'Verification Failed',
-          text: response?.message || 'Invalid verification code. Please try again.',
-          confirmButtonColor: '#6366f1',
-          showCancelButton: true,
-          confirmButtonText: 'Try Again',
-          cancelButtonText: 'Resend Code',
-          customClass: {
-            popup: 'tfa-popup',
-            title: 'tfa-title',
-            confirmButton: 'tfa-confirm-btn',
-            cancelButton: 'tfa-cancel-btn'
-          }
-        }).then((result) => {
-          if (result.dismiss === Swal.DismissReason.cancel) {
-            this.resend2FACode();
-          } else {
-            this.show2FAVerification();
-          }
-        });
+        this.tfaError = response?.message || 'Invalid code. Please try again.';
       }
     } catch (err: any) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Verification Failed',
-        text: err.error?.message || 'Invalid code. Please try again.',
-        confirmButtonColor: '#6366f1',
-        showCancelButton: true,
-        confirmButtonText: 'Try Again',
-        cancelButtonText: 'Resend Code',
-        customClass: {
-          popup: 'tfa-popup',
-          title: 'tfa-title',
-          confirmButton: 'tfa-confirm-btn',
-          cancelButton: 'tfa-cancel-btn'
-        }
-      }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.cancel) {
-          this.resend2FACode();
-        } else {
-          this.show2FAVerification();
-        }
-      });
+      this.tfaError = err.error?.message || 'Verification failed. Please try again.';
+    } finally {
+      this.tfaLoading = false;
     }
   }
 
-  async resend2FACode() {
+  async resendCode() {
+    this.resending = true;
+    this.tfaError = '';
     try {
-      const response = await this.api.resend2FA().toPromise();
-      
-      await Swal.fire({
-        icon: 'success',
-        title: 'Code Sent!',
-        text: response?.message || 'A new verification code has been sent to your email.',
-        confirmButtonColor: '#6366f1',
-        timer: 3000,
-        timerProgressBar: true,
-        showConfirmButton: false,
-        customClass: {
-          popup: 'tfa-popup',
-          title: 'tfa-title'
-        }
-      });
-      
-      // Show 2FA verification again
-      await this.show2FAVerification();
+      await this.api.resend2FA().toPromise();
+      this.tfaCode = '';
     } catch (err: any) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Failed to Resend',
-        text: err.error?.message || 'Failed to resend code. Please wait a moment and try again.',
-        confirmButtonColor: '#6366f1',
-        customClass: {
-          popup: 'tfa-popup',
-          title: 'tfa-title',
-          confirmButton: 'tfa-confirm-btn'
-        }
-      });
+      this.tfaError = err.error?.message || 'Failed to resend code. Please try again.';
+    } finally {
+      this.resending = false;
     }
+  }
+
+  cancelTfa() {
+    this.show2FA = false;
+    this.tfaCode = '';
+    this.tfaError = '';
+  }
+
+  // ═══════════════════════════════════════════
+  // FULLSCREEN ARCHITECTURE VIEWER
+  // ═══════════════════════════════════════════
+
+  openFullscreenViewer(): void {
+    this.showFullscreenViewer = true;
+    this.viewerZoom = 1;
+    this.viewerPanX = 0;
+    this.viewerPanY = 0;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeFullscreenViewer(): void {
+    this.showFullscreenViewer = false;
+    document.body.style.overflow = '';
+  }
+
+  zoomIn(): void {
+    this.viewerZoom = Math.min(this.viewerZoom + 0.2, 3);
+  }
+
+  zoomOut(): void {
+    this.viewerZoom = Math.max(this.viewerZoom - 0.2, 0.3);
+  }
+
+  resetView(): void {
+    this.viewerZoom = 1;
+    this.viewerPanX = 0;
+    this.viewerPanY = 0;
+  }
+
+  onViewerWheel(event: WheelEvent): void {
+    event.preventDefault();
+    const delta = event.deltaY > 0 ? -0.1 : 0.1;
+    this.viewerZoom = Math.max(0.3, Math.min(this.viewerZoom + delta, 3));
+  }
+
+  onViewerMouseDown(event: MouseEvent): void {
+    if (event.button === 0) {
+      this.isViewerDragging = true;
+      this.viewerDragStart = { x: event.clientX, y: event.clientY };
+      this.viewerPanStart = { x: this.viewerPanX, y: this.viewerPanY };
+    }
+  }
+
+  onViewerMouseMove(event: MouseEvent): void {
+    if (this.isViewerDragging) {
+      const dx = event.clientX - this.viewerDragStart.x;
+      const dy = event.clientY - this.viewerDragStart.y;
+      this.viewerPanX = this.viewerPanStart.x + dx;
+      this.viewerPanY = this.viewerPanStart.y + dy;
+    }
+  }
+
+  onViewerMouseUp(): void {
+    this.isViewerDragging = false;
+  }
+
+  getViewerTransform(): string {
+    return `translate(${this.viewerPanX}px, ${this.viewerPanY}px) scale(${this.viewerZoom})`;
+  }
+
+  getConnectionLabelX(conn: FlowConnection): number {
+    const fromNode = this.flowNodes.find(n => n.id === conn.from);
+    if (!fromNode) return 0;
+    return fromNode.x + fromNode.width / 2;
+  }
+
+  getConnectionLabelY(conn: FlowConnection): number {
+    const fromNode = this.flowNodes.find(n => n.id === conn.from);
+    if (!fromNode) return 0;
+    return fromNode.y + fromNode.height / 2 - 10;
+  }
+
+  getConnectionLabel(conn: FlowConnection): string {
+    return conn.method ? `${conn.label} (${conn.method})` : conn.label;
   }
 }

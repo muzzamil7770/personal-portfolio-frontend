@@ -6,11 +6,12 @@ import { UiService } from '../../core/services/ui.service';
 import { ApiService, ContactFormData } from '../../core/services/api.service';
 import { ToastService } from '../../core/services/toast.service';
 import { CvViewerComponent } from '../cv-viewer/cv-viewer.component';
+import { AiChatbotComponent } from '../../shared/components/ai-chatbot/ai-chatbot.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CvViewerComponent],
+  imports: [CommonModule, ReactiveFormsModule, CvViewerComponent, AiChatbotComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })

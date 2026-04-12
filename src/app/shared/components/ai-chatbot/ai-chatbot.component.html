@@ -1,0 +1,97 @@
+<!-- ═══════ CHATBOT FAB BUTTON ═══════ -->
+<button class="chat-fab" (click)="toggleChat()" [class.open]="isOpen" title="AI Chat Assistant">
+  <i class="fas" [class.fa-comments]="!isOpen" [class.fa-times]="isOpen"></i>
+  <span class="fab-badge" *ngIf="!isOpen && messages.length > 1">1</span>
+</button>
+
+<!-- ═══════ CHAT WINDOW ═══════ -->
+<div class="chat-window" *ngIf="isOpen" [@slideIn]>
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-left">
+      <div class="bot-avatar">
+        <i class="fas fa-robot"></i>
+      </div>
+      <div class="header-info">
+        <h3>AI Assistant</h3>
+        <span class="status" [class.online]="!isTyping" [class.typing]="isTyping">
+          <span class="status-dot"></span>
+          {{ isTyping ? 'Typing...' : 'Online' }}
+        </span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn" (click)="clearConversation()" title="Clear conversation">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+      <button class="action-btn" (click)="toggleChat()" title="Close chat">
+        <i class="fas fa-chevron-down"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages" #messagesContainer>
+    <div class="message" *ngFor="let msg of messages" [class.user]="msg.sender === 'user'" [class.ai]="msg.sender === 'ai'" [class.system]="msg.sender === 'system'">
+      <div class="message-bubble">
+        <div class="message-content" [innerHTML]="formatMessage(msg.text)"></div>
+        <div class="message-meta">
+          <span class="message-time">{{ msg.timestamp | date:'shortTime' }}</span>
+          <span class="message-provider" *ngIf="msg.provider && msg.provider !== 'local'">
+            {{ msg.provider }}
+          </span>
+          <span class="message-command" *ngIf="msg.command">
+            {{ msg.command }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typing indicator -->
+    <div class="message ai" *ngIf="isTyping">
+      <div class="message-bubble typing-bubble">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Commands -->
+  <div class="quick-commands" *ngIf="showCommands && availableCommands">
+    <div class="quick-label">Quick Commands:</div>
+    <div class="quick-list">
+      <button class="quick-btn" (click)="sendCommand('help')">help</button>
+      <button class="quick-btn" (click)="sendCommand('about')">about</button>
+      <button class="quick-btn" (click)="sendCommand('skills')">skills</button>
+      <button class="quick-btn" (click)="sendCommand('projects')">projects</button>
+      <button class="quick-btn" (click)="sendCommand('contact')">contact</button>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input">
+    <textarea
+      #inputElement
+      [(ngModel)]="inputMessage"
+      (keydown)="onKeyPress($event)"
+      placeholder="Type a message or /command..."
+      [disabled]="isLoading"
+      rows="1"
+      maxlength="2000">
+    </textarea>
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!inputMessage.trim() || isLoading">
+      <i class="fas fa-paper-plane" *ngIf="!isLoading"></i>
+      <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <div class="chat-footer">
+    <span>Powered by AI</span>
+    <span class="footer-separator">•</span>
+    <span>{{ messages.length }} messages</span>
+  </div>
+</div>

@@ -1,0 +1,579 @@
+<div class="login-wrap">
+  <!-- ═══════ ANIMATED FLOW DIAGRAM BACKGROUND ═══════ -->
+  <div class="flow-diagram-bg" [class.paused]="!animationActive">
+    <svg class="flow-svg" [attr.viewBox]="svgViewBox" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="gradFrontend" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.9" />
+        </linearGradient>
+        <linearGradient id="gradBackend" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.9" />
+        </linearGradient>
+        <linearGradient id="gradDatabase" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.9" />
+        </linearGradient>
+        <linearGradient id="gradAuth" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#fa709a;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#fee140;stop-opacity:0.9" />
+        </linearGradient>
+        <linearGradient id="gradService" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#30cfd0;stop-opacity:0.9" />
+          <stop offset="100%" style="stop-color:#330867;stop-opacity:0.9" />
+        </linearGradient>
+        
+        <!-- Glow filter -->
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="8" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        
+        <filter id="glowStrong" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="12" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        
+        <!-- Arrow marker -->
+        <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#667eea" />
+        </marker>
+        <marker id="arrowPink" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#f093fb" />
+        </marker>
+        <marker id="arrowCyan" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#4facfe" />
+        </marker>
+      </defs>
+      
+      <!-- Connection lines with animated dashes -->
+      <g class="connections">
+        <ng-container *ngFor="let conn of visibleConnections">
+          <path
+            [attr.d]="getConnectionPath(conn)"
+            class="connection-line"
+            [class.animated]="animationActive"
+            [attr.stroke]="conn.color"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#arrowBlue)"
+            opacity="0.6"
+          />
+          <!-- Animated flow particle -->
+          <circle class="flow-particle" r="4" [attr.fill]="conn.color" filter="url(#glow)">
+            <animateMotion
+              [attr.dur]="getParticleDuration(conn)"
+              repeatCount="indefinite"
+              [attr.path]="getConnectionPath(conn)"
+            />
+          </circle>
+        </ng-container>
+      </g>
+      
+      <!-- Floating nodes -->
+      <g class="nodes">
+        <ng-container *ngFor="let node of flowNodes">
+          <g
+            class="flow-node"
+            [class.dragging]="draggingNode?.id === node.id"
+            [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+            (mousedown)="startDrag($event, node)"
+            (mousemove)="onDrag($event)"
+            (mouseup)="endDrag()"
+            (mouseleave)="endDrag()"
+            (touchstart)="startDragTouch($event, node)"
+            (touchmove)="onDragTouch($event)"
+            (touchend)="endDrag()"
+          >
+            <!-- Node background with direct fill instead of URL reference -->
+            <rect
+              [attr.width]="node.width"
+              [attr.height]="node.height"
+              rx="12"
+              ry="12"
+              [style.fill]="getGradientUrl(node.type)"
+              class="node-rect"
+              filter="url(#glow)"
+              opacity="0.85"
+            />
+            
+            <!-- Node icon -->
+            <text
+              x="20"
+              y="28"
+              class="node-icon"
+              fill="#fff"
+              font-size="18"
+              font-family="'Font Awesome 6 Free'"
+              font-weight="900"
+            >{{ getNodeIcon(node) }}</text>
+            
+            <!-- Node label -->
+            <text
+              x="45"
+              y="22"
+              class="node-label"
+              fill="#fff"
+              font-size="13"
+              font-weight="700"
+              font-family="Inter, system-ui, sans-serif"
+            >{{ node.label }}</text>
+            
+            <!-- Node details -->
+            <ng-container *ngFor="let detail of node.details; let i = index">
+              <text
+                x="15"
+                [attr.y]="45 + (i * 16)"
+                class="node-detail"
+                fill="rgba(255,255,255,0.85)"
+                font-size="10"
+                font-family="Inter, system-ui, sans-serif"
+              >• {{ detail }}</text>
+            </ng-container>
+            
+            <!-- Pulse animation -->
+            <rect
+              [attr.width]="node.width"
+              [attr.height]="node.height"
+              rx="12"
+              ry="12"
+              fill="none"
+              stroke="#fff"
+              stroke-width="2"
+              opacity="0"
+              class="node-pulse"
+            >
+              <animate
+                attributeName="opacity"
+                values="0;0.4;0"
+                dur="3s"
+                repeatCount="indefinite"
+                [attr.begin]="getNodeDelay(node)"
+              />
+            </rect>
+          </g>
+        </ng-container>
+      </g>
+    </svg>
+    
+    <!-- Grid pattern overlay -->
+    <div class="grid-overlay"></div>
+    
+    <!-- Floating particles -->
+    <div class="particles-container">
+      <div class="particle" *ngFor="let p of particles; let i = index"
+           [style.left.%]="p.x"
+           [style.top.%]="p.y"
+           [style.animation-delay.s]="p.delay"
+           [style.animation-duration.s]="p.duration"
+           [style.width.px]="p.size"
+           [style.height.px]="p.size">
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TOP BAR ═══════ -->
+  <div class="login-topbar">
+    <a class="back-btn" routerLink="/" title="Back to Portfolio">
+      <i class="fas fa-arrow-left"></i><span>Back to Portfolio</span>
+    </a>
+    <div class="topbar-actions">
+      <button class="view-arch-btn" (click)="openFullscreenViewer()" title="View Full Architecture">
+        <i class="fas fa-project-diagram"></i>
+        <span>View Architecture</span>
+      </button>
+      <div class="theme-toggle" (click)="themeService.toggleTheme()" title="Toggle theme" role="button">
+        <div class="theme-toggle-circle"><i class="fas fa-moon"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ LOGIN CARD ═══════ -->
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon-wrapper">
+        <div class="login-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="icon-glow"></div>
+      </div>
+      <h2>Admin Portal</h2>
+      <p class="subtitle">Portfolio Management System</p>
+    </div>
+
+    <form (ngSubmit)="login" class="login-form">
+      <div class="field">
+        <label>Username</label>
+        <div class="input-wrap">
+          <i class="fas fa-user input-icon"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="username" 
+            name="username" 
+            placeholder="Enter username" 
+            required 
+            autocomplete="username" 
+          />
+        </div>
+      </div>
+      
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input 
+            [type]="showPass ? 'text' : 'password'" 
+            [(ngModel)]="password" 
+            name="password" 
+            placeholder="••••••••" 
+            required 
+            autocomplete="current-password" 
+          />
+          <button type="button" class="pass-toggle" (click)="showPass = !showPass" tabindex="-1">
+            <i [class]="showPass ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+      </div>
+      
+      <p class="error" *ngIf="error">
+        <i class="fas fa-exclamation-circle"></i> {{ error }}
+      </p>
+      
+      <button type="submit" class="submit-btn" [disabled]="loading">
+        <span class="btn-content">
+          <i class="fas fa-spinner fa-spin" *ngIf="loading"></i>
+          <i class="fas fa-sign-in-alt" *ngIf="!loading"></i>
+          {{ loading ? 'Verifying...' : 'Login' }}
+        </span>
+        <span class="btn-shine"></span>
+      </button>
+    </form>
+
+    <div class="login-divider"><span>or</span></div>
+    
+    <a class="portfolio-link" routerLink="/">
+      <i class="fas fa-globe"></i> View Portfolio
+    </a>
+  </div>
+
+  <!-- ═══════ 2FA Dialog ═══════ -->
+  <div class="tfa-backdrop" *ngIf="show2FA" (click)="cancelTfa()"></div>
+  <div class="tfa-dialog" *ngIf="show2FA" role="dialog" aria-modal="true" aria-labelledby="tfa-title">
+    <div class="tfa-header">
+      <div class="tfa-icon-wrap">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div>
+        <div class="tfa-title" id="tfa-title">Two-Factor Authentication</div>
+        <div class="tfa-subtitle">Check your email for the 6-digit code</div>
+      </div>
+    </div>
+
+    <div class="tfa-body">
+      <p class="tfa-desc">
+        <i class="fas fa-envelope-open-text"></i>
+        A verification code has been sent to your registered email address.
+      </p>
+
+      <div class="tfa-code-wrap">
+        <label class="tfa-label">Verification Code</label>
+        <div class="tfa-input-row">
+          <i class="fas fa-key tfa-input-icon"></i>
+          <input
+            class="tfa-input"
+            type="text"
+            [(ngModel)]="tfaCode"
+            maxlength="6"
+            inputmode="numeric"
+            placeholder="000000"
+            (keydown.enter)="submitTfa()"
+            #tfaInput />
+        </div>
+        <p class="tfa-error" *ngIf="tfaError">
+          <i class="fas fa-exclamation-triangle"></i> {{ tfaError }}
+        </p>
+      </div>
+
+      <div class="tfa-resend-row">
+        <span class="tfa-resend-label">Didn't receive it?</span>
+        <button class="tfa-resend-btn" (click)="resendCode()" [disabled]="resending">
+          <i class="fas fa-redo" [class.fa-spin]="resending"></i>
+          {{ resending ? 'Sending...' : 'Resend Code' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="tfa-footer">
+      <button class="tfa-cancel-btn" (click)="cancelTfa()" [disabled]="tfaLoading">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+      <button class="tfa-verify-btn" (click)="submitTfa()" [disabled]="tfaLoading || tfaCode.length !== 6">
+        <i class="fas fa-spinner fa-spin" *ngIf="tfaLoading"></i>
+        <i class="fas fa-check" *ngIf="!tfaLoading"></i>
+        {{ tfaLoading ? 'Verifying...' : 'Verify & Login' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════ FULLSCREEN ARCHITECTURE VIEWER ═══════ -->
+  <div class="fullscreen-viewer" *ngIf="showFullscreenViewer" (click)="closeFullscreenViewer()">
+    <div class="fullscreen-content" (click)="$event.stopPropagation()">
+      <!-- Viewer Header -->
+      <div class="viewer-header">
+        <div class="viewer-title">
+          <i class="fas fa-project-diagram"></i>
+          <span>Full-Stack Architecture Diagram</span>
+        </div>
+        <div class="viewer-controls">
+          <button class="control-btn" (click)="zoomOut()" title="Zoom Out">
+            <i class="fas fa-search-minus"></i>
+          </button>
+          <span class="zoom-level">{{ (viewerZoom * 100).toFixed(0) }}%</span>
+          <button class="control-btn" (click)="zoomIn()" title="Zoom In">
+            <i class="fas fa-search-plus"></i>
+          </button>
+          <button class="control-btn reset-btn" (click)="resetView()" title="Reset View">
+            <i class="fas fa-compress-arrows-alt"></i>
+            <span>Reset</span>
+          </button>
+          <button class="control-btn close-btn" (click)="closeFullscreenViewer()" title="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Viewer Canvas -->
+      <div class="viewer-canvas"
+           #fullscreenViewer
+           (mousedown)="onViewerMouseDown($event)"
+           (mousemove)="onViewerMouseMove($event)"
+           (mouseup)="onViewerMouseUp()"
+           (mouseleave)="onViewerMouseUp()"
+           (wheel)="onViewerWheel($event)">
+        <div class="viewer-transform" [style.transform]="getViewerTransform()">
+          <svg class="viewer-svg" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="gradFrontendFS" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.95" />
+                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.95" />
+              </linearGradient>
+              <linearGradient id="gradBackendFS" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.95" />
+                <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.95" />
+              </linearGradient>
+              <linearGradient id="gradDatabaseFS" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.95" />
+                <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.95" />
+              </linearGradient>
+              <linearGradient id="gradAuthFS" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#fa709a;stop-opacity:0.95" />
+                <stop offset="100%" style="stop-color:#fee140;stop-opacity:0.95" />
+              </linearGradient>
+              <linearGradient id="gradServiceFS" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#30cfd0;stop-opacity:0.95" />
+                <stop offset="100%" style="stop-color:#330867;stop-opacity:0.95" />
+              </linearGradient>
+
+              <filter id="glowFS" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="12" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+
+              <marker id="arrowFS" markerWidth="12" markerHeight="12" refX="10" refY="4" orient="auto">
+                <path d="M0,0 L0,8 L11,4 z" fill="#a0aec0" />
+              </marker>
+            </defs>
+
+            <!-- Background grid -->
+            <rect width="1400" height="900" fill="#0f172a" />
+            <g opacity="0.1">
+              <pattern id="gridFS" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#334155" stroke-width="1" />
+              </pattern>
+              <rect width="1400" height="900" fill="url(#gridFS)" />
+            </g>
+
+            <!-- Connection lines -->
+            <g class="viewer-connections">
+              <ng-container *ngFor="let conn of visibleConnections">
+                <path
+                  [attr.d]="getConnectionPath(conn)"
+                  class="viewer-connection-line"
+                  [attr.stroke]="conn.color"
+                  stroke-width="2.5"
+                  fill="none"
+                  marker-end="url(#arrowFS)"
+                  opacity="0.7"
+                />
+                <!-- Animated flow particle -->
+                <circle class="viewer-particle" r="5" [attr.fill]="conn.color" filter="url(#glowFS)">
+                  <animateMotion
+                    [attr.dur]="getParticleDuration(conn)"
+                    repeatCount="indefinite"
+                    [attr.path]="getConnectionPath(conn)"
+                  />
+                </circle>
+                <!-- Connection label -->
+                <text
+                  [attr.x]="getConnectionLabelX(conn)"
+                  [attr.y]="getConnectionLabelY(conn)"
+                  class="viewer-conn-label"
+                  fill="#94a3b8"
+                  font-size="11"
+                  font-weight="600"
+                  text-anchor="middle"
+                  font-family="Inter, system-ui, sans-serif"
+                >{{ getConnectionLabel(conn) }}</text>
+              </ng-container>
+            </g>
+
+            <!-- Nodes -->
+            <g class="viewer-nodes">
+              <ng-container *ngFor="let node of flowNodes">
+                <g
+                  class="viewer-node"
+                  [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+                  (mousedown)="startDrag($event, node)"
+                  (mousemove)="onDrag($event)"
+                  (mouseup)="endDrag()"
+                  (mouseleave)="endDrag()"
+                >
+                  <!-- Node shadow -->
+                  <rect
+                    [attr.width]="node.width"
+                    [attr.height]="node.height"
+                    rx="14"
+                    ry="14"
+                    fill="rgba(0,0,0,0.4)"
+                    filter="url(#glowFS)"
+                    transform="translate(0, 4)"
+                  />
+
+                  <!-- Node background -->
+                  <rect
+                    [attr.width]="node.width"
+                    [attr.height]="node.height"
+                    rx="14"
+                    ry="14"
+                    [style.fill]="getGradientUrlFS(node.type)"
+                    class="viewer-node-rect"
+                    opacity="0.95"
+                  />
+
+                  <!-- Node border highlight -->
+                  <rect
+                    [attr.width]="node.width"
+                    [attr.height]="node.height"
+                    rx="14"
+                    ry="14"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.3)"
+                    stroke-width="2"
+                  />
+
+                  <!-- Node icon -->
+                  <text
+                    x="22"
+                    y="30"
+                    class="viewer-node-icon"
+                    fill="#fff"
+                    font-size="20"
+                    font-family="'Font Awesome 6 Free'"
+                    font-weight="900"
+                  >{{ getNodeIcon(node) }}</text>
+
+                  <!-- Node label -->
+                  <text
+                    x="52"
+                    y="24"
+                    class="viewer-node-label"
+                    fill="#fff"
+                    font-size="15"
+                    font-weight="700"
+                    font-family="Inter, system-ui, sans-serif"
+                  >{{ node.label }}</text>
+
+                  <!-- Node details -->
+                  <ng-container *ngFor="let detail of node.details; let i = index">
+                    <text
+                      x="18"
+                      [attr.y]="52 + (i * 18)"
+                      class="viewer-node-detail"
+                      fill="rgba(255,255,255,0.9)"
+                      font-size="11"
+                      font-family="Inter, system-ui, sans-serif"
+                    >• {{ detail }}</text>
+                  </ng-container>
+
+                  <!-- Pulse animation -->
+                  <rect
+                    [attr.width]="node.width"
+                    [attr.height]="node.height"
+                    rx="14"
+                    ry="14"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="3"
+                    opacity="0"
+                    class="viewer-node-pulse"
+                  >
+                    <animate
+                      attributeName="opacity"
+                      values="0;0.5;0"
+                      dur="3s"
+                      repeatCount="indefinite"
+                      [attr.begin]="getNodeDelay(node)"
+                    />
+                  </rect>
+                </g>
+              </ng-container>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Viewer Footer -->
+      <div class="viewer-footer">
+        <div class="viewer-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background: linear-gradient(135deg, #667eea, #764ba2);"></span>
+            <span>Frontend (Angular)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></span>
+            <span>Backend (Express.js)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></span>
+            <span>Database (Firebase)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: linear-gradient(135deg, #fa709a, #fee140);"></span>
+            <span>Authentication</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: linear-gradient(135deg, #30cfd0, #330867);"></span>
+            <span>Services</span>
+          </div>
+        </div>
+        <div class="viewer-hint">
+          <i class="fas fa-mouse-pointer"></i>
+          <span>Drag to pan • Scroll to zoom • Drag nodes to rearrange</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

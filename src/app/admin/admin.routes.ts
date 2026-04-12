@@ -23,6 +23,14 @@ export const adminRoutes: Routes = [
       {
         path: 'analytics',
         loadComponent: () => import('./analytics/analytics.component').then(m => m.AnalyticsComponent)
+      },
+      {
+        path: 'ai-stats',
+        loadComponent: () => import('./ai-stats/ai-stats.component').then(m => m.AiStatsComponent)
+      },
+      {
+        path: 'conversations',
+        loadComponent: () => import('./conversations/conversations.component').then(m => m.ConversationsComponent)
       }
     ]
   }

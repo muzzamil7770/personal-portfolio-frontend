@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { CooldownService } from './cooldown.service';
+import { ToastService } from './toast.service';
 
 export interface ContactFormData {
   name: string;
@@ -32,7 +33,7 @@ export interface ApiResponse {
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private cooldown: CooldownService) {}
+  constructor(private http: HttpClient, private cooldown: CooldownService, private toast: ToastService) {}
 
   submitContactForm(data: ContactFormData): Observable<ApiResponse> {
     return this.http
@@ -48,6 +49,13 @@ export class ApiService {
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     if (error.status === 429) {
+      // Daily IP limit exceeded
+      if (error.error?.limitExceeded) {
+        const msg = error.error.message || 'You have reached the daily submission limit. Please try again tomorrow.';
+        this.toast.error('Daily Limit Reached 🚫', msg);
+        return throwError(() => new Error(msg));
+      }
+      // General rate limit (cooldown overlay)
       const retryAfter = error.headers?.get('retry-after');
       const ms = retryAfter ? parseInt(retryAfter, 10) * 1000 : 3600000;
       const reason = error.error?.message || 'Too many requests. Please wait before trying again.';

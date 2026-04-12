@@ -1,10 +1,11 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ThemeService } from './core/services/theme.service';
 import { UiService } from './core/services/ui.service';
 import { DataService, SiteData } from './core/services/data.service';
+import { VisitorTrackingService } from './core/services/visitor-tracking.service';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { MobileMenuComponent } from './shared/components/mobile-menu/mobile-menu.component';
 import { ScrollProgressComponent } from './shared/components/scroll-progress/scroll-progress.component';
@@ -46,7 +47,7 @@ import { PortfolioProjectSidebarComponent } from './shared/components/portfolio-
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   siteData: SiteData;
   isAdmin = false;
 
@@ -55,7 +56,8 @@ export class AppComponent implements OnInit {
     private themeService: ThemeService,
     private uiService: UiService,
     private dataService: DataService,
-    private router: Router
+    private router: Router,
+    private tracking: VisitorTrackingService
   ) {
     this.siteData = this.dataService.getData();
   }
@@ -63,12 +65,17 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.themeService.initTheme();
+      this.tracking.init();
     }
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
     ).subscribe((e: any) => {
       this.isAdmin = e.urlAfterRedirects.startsWith('/admin');
     });
+  }
+
+  ngOnDestroy(): void {
+    this.tracking.destroy();
   }
 
   openHireMeModal(): void {

@@ -1,91 +1,186 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '../../core/services/theme.service';
+import { ThemeService, THEMES, AppTheme } from '../../core/services/theme.service';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
   imports: [RouterModule, CommonModule],
   template: `
+    <!-- Mobile top bar -->
+    <div class="mob-bar">
+      <button class="mob-hamburger" (click)="sidebarOpen = !sidebarOpen" aria-label="Menu">
+        <span [class.open]="sidebarOpen"></span>
+        <span [class.open]="sidebarOpen"></span>
+        <span [class.open]="sidebarOpen"></span>
+      </button>
+      <div class="mob-brand"><i class="fas fa-bolt"></i> Admin Panel</div>
+      <button class="mob-theme" (click)="themeService.toggleTheme()" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="sb-backdrop" [class.visible]="sidebarOpen" (click)="sidebarOpen = false"></div>
+
     <div class="admin-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <i class="fas fa-bolt brand-icon"></i>
-          <span>Admin Panel</span>
-        </div>
+      <aside class="sidebar" [class.open]="sidebarOpen">
+        <div class="brand"><i class="fas fa-bolt brand-icon"></i><span>Admin Panel</span></div>
+
         <nav>
-          <a routerLink="contacts" routerLinkActive="active">
+          <a routerLink="contacts" routerLinkActive="active" (click)="sidebarOpen = false">
             <i class="fas fa-envelope"></i> Contacts
           </a>
-          <a routerLink="hires" routerLinkActive="active">
+          <a routerLink="hires" routerLinkActive="active" (click)="sidebarOpen = false">
             <i class="fas fa-briefcase"></i> Hire Requests
           </a>
-          <a routerLink="analytics" routerLinkActive="active">
+          <a routerLink="analytics" routerLinkActive="active" (click)="sidebarOpen = false">
             <i class="fas fa-chart-bar"></i> Analytics
           </a>
+          <a routerLink="ai-stats" routerLinkActive="active" (click)="sidebarOpen = false">
+            <i class="fas fa-robot"></i> AI Chatbot
+          </a>
+          <a routerLink="conversations" routerLinkActive="active" (click)="sidebarOpen = false">
+            <i class="fas fa-comments"></i> Conversations
+          </a>
         </nav>
-        <div class="sidebar-footer">
-          <div class="theme-row" (click)="themeService.toggleTheme()" title="Toggle theme">
-            <div class="theme-toggle">
-              <div class="theme-toggle-circle">
-                <i class="fas fa-moon"></i>
-              </div>
-            </div>
-            <span class="theme-label">Toggle Theme</span>
+
+        <!-- Theme Picker -->
+        <div class="theme-section">
+          <div class="theme-section-label">
+            <i class="fas fa-palette"></i> Theme
           </div>
+          <div class="theme-grid">
+            <button
+              *ngFor="let t of themes"
+              class="theme-chip"
+              [class.active]="currentTheme === t.id"
+              [attr.data-theme]="t.id"
+              [title]="t.label"
+              (click)="applyTheme(t)">
+              <i [class]="t.icon"></i>
+              <span>{{ t.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
           <button class="logout-btn" (click)="logout()">
             <i class="fas fa-sign-out-alt"></i> Logout
           </button>
         </div>
       </aside>
+
       <main class="content">
         <router-outlet></router-outlet>
       </main>
     </div>
   `,
   styles: [`
+    /* Mobile top bar */
+    .mob-bar {
+      display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 1100;
+      height: 56px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+      align-items: center; justify-content: space-between; padding: 0 1rem;
+    }
+    @media(max-width:768px) { .mob-bar { display: flex; } }
+    .mob-hamburger {
+      width: 36px; height: 36px; background: none; border: none;
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; gap: 5px; cursor: pointer; padding: 4px;
+    }
+    .mob-hamburger span {
+      display: block; width: 20px; height: 2px;
+      background: var(--text-secondary); border-radius: 2px;
+      transition: all 0.3s ease; transform-origin: center;
+    }
+    .mob-hamburger span:nth-child(1).open { transform: translateY(7px) rotate(45deg); }
+    .mob-hamburger span:nth-child(2).open { opacity: 0; transform: scaleX(0); }
+    .mob-hamburger span:nth-child(3).open { transform: translateY(-7px) rotate(-45deg); }
+    .mob-brand { color: var(--primary); font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
+    .mob-theme {
+      width: 36px; height: 36px; background: var(--bg-tertiary); border: 1px solid var(--border-color);
+      border-radius: 8px; color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Backdrop */
+    .sb-backdrop { display: none; position: fixed; inset: 0; z-index: 1099; background: rgba(0,0,0,0.55); backdrop-filter: blur(3px); }
+    @media(max-width:768px) {
+      .sb-backdrop { display: block; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+      .sb-backdrop.visible { opacity: 1; pointer-events: all; }
+    }
+
+    /* Shell */
     .admin-shell { display: flex; min-height: 100vh; background: var(--bg-primary); }
+    @media(max-width:768px) { .admin-shell { padding-top: 56px; } }
+
+    /* Sidebar */
     .sidebar {
       width: 220px; background: var(--bg-secondary); border-right: 1px solid var(--border-color);
       display: flex; flex-direction: column; padding: 1.5rem 1rem;
-      position: sticky; top: 0; height: 100vh; flex-shrink: 0;
+      position: sticky; top: 0; height: 100vh; flex-shrink: 0; overflow-y: auto;
+    }
+    .sidebar::-webkit-scrollbar { width: 3px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--primary-200); border-radius: 2px; }
+    @media(max-width:768px) {
+      .sidebar {
+        position: fixed; top: 56px; left: 0; bottom: 0; z-index: 1100;
+        transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+        height: calc(100vh - 56px); width: 240px;
+      }
+      .sidebar.open { transform: translateX(0); }
     }
     .brand {
       display: flex; align-items: center; gap: 8px; color: var(--primary);
       font-size: 1.1rem; font-weight: 700; margin-bottom: 2rem; padding: 0 0.5rem;
     }
-    .brand-icon { font-size: 1.1rem; }
-    nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    @media(max-width:768px) { .brand { display: none; } }
+
+    nav { display: flex; flex-direction: column; gap: 4px; }
     nav a {
       display: flex; align-items: center; gap: 10px; padding: 0.65rem 0.75rem;
-      border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.875rem;
-      transition: all 0.2s; font-weight: 500;
+      border-radius: 8px; color: var(--text-secondary); text-decoration: none;
+      font-size: 0.875rem; transition: all 0.2s; font-weight: 500;
     }
     nav a i { width: 16px; text-align: center; color: var(--text-muted); transition: color 0.2s; }
     nav a:hover { background: var(--primary-100); color: var(--primary); }
     nav a:hover i { color: var(--primary); }
     nav a.active { background: var(--primary); color: #fff; }
     nav a.active i { color: #fff; }
-    .sidebar-footer { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); }
-    .theme-row {
-      display: flex; align-items: center; gap: 10px; padding: 0.5rem 0.75rem;
-      border-radius: 8px; cursor: pointer; transition: background 0.2s;
+
+    /* Theme Picker */
+    .theme-section {
+      margin-top: 1.25rem; padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
     }
-    .theme-row:hover { background: var(--primary-100); }
-    .theme-toggle {
-      width: 40px; height: 22px; background: var(--primary);
-      border-radius: 999px; position: relative; flex-shrink: 0;
+    .theme-section-label {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--text-muted); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.75rem;
     }
-    .theme-toggle-circle {
-      position: absolute; top: 2px; left: 2px;
-      width: 18px; height: 18px; background: #fff; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; color: var(--primary);
-      transition: transform 0.25s ease;
+    .theme-section-label i { color: var(--primary); font-size: 0.75rem; }
+    .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .theme-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 8px; border-radius: 7px; border: 1.5px solid var(--border-color);
+      background: var(--bg-tertiary); color: var(--text-muted);
+      cursor: pointer; font-size: 0.72rem; font-weight: 600;
+      transition: all 0.18s; font-family: inherit;
     }
-    body.light .theme-toggle-circle { transform: translateX(18px); }
-    .theme-label { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
+    .theme-chip i { font-size: 0.7rem; }
+    .theme-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-100); }
+    .theme-chip.active {
+      border-color: var(--primary); background: var(--primary);
+      color: #fff; box-shadow: 0 2px 8px var(--primary-200);
+    }
+
+    /* Footer */
+    .sidebar-footer {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color);
+    }
     .logout-btn {
       display: flex; align-items: center; gap: 8px;
       background: none; border: 1px solid var(--border-color); color: var(--text-muted);
@@ -93,11 +188,32 @@ import { ThemeService } from '../../core/services/theme.service';
       transition: all 0.2s; width: 100%;
     }
     .logout-btn:hover { border-color: #f87171; color: #f87171; }
-    .content { flex: 1; padding: 2rem; overflow: visible; position: relative; }
+
+    /* Content */
+    .content { flex: 1; padding: 2rem; overflow: visible; position: relative; min-width: 0; }
+    @media(max-width:768px) { .content { padding: 1rem; } }
+    @media(max-width:480px) { .content { padding: 0.75rem; } }
   `]
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent implements OnInit {
+  sidebarOpen = false;
+  themes: AppTheme[] = THEMES;
+  currentTheme = 'dark';
+
   constructor(private router: Router, public themeService: ThemeService) {}
+
+  ngOnInit() {
+    this.themeService.current$.subscribe(id => this.currentTheme = id);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEsc() { this.sidebarOpen = false; }
+
+  applyTheme(t: AppTheme) {
+    this.themeService.setTheme(t.id);
+    this.currentTheme = t.id;
+  }
+
   logout() {
     localStorage.removeItem('admin_auth');
     localStorage.removeItem('admin_token');

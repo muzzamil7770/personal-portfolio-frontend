@@ -66,6 +66,145 @@
     --duration-slow: 400ms;
 }
 
+/* ============================================
+   EXTRA THEMES
+   ============================================ */
+
+/* Ocean — deep teal/cyan dark */
+body.theme-ocean {
+    --primary: #06b6d4;
+    --primary-light: #0891b2;
+    --primary-dark: #0e7490;
+    --primary-50: rgba(6,182,212,0.05);
+    --primary-100: rgba(6,182,212,0.12);
+    --primary-200: rgba(6,182,212,0.22);
+    --bg-primary: #040d14;
+    --bg-secondary: #071520;
+    --bg-tertiary: #0b1e2d;
+    --bg-card: #071520;
+    --bg-card-hover: #0b1e2d;
+    --bg-nav: rgba(4,13,20,0.95);
+    --bg-input: #071520;
+    --text-primary: #e0f7fa;
+    --text-secondary: #90cad4;
+    --text-muted: #4a8a99;
+    --text-link: #06b6d4;
+    --border-color: rgba(6,182,212,0.14);
+    --border-light: rgba(6,182,212,0.08);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 16px 48px rgba(0,0,0,0.45);
+}
+
+/* Forest — deep green dark */
+body.theme-forest {
+    --primary: #22c55e;
+    --primary-light: #16a34a;
+    --primary-dark: #15803d;
+    --primary-50: rgba(34,197,94,0.05);
+    --primary-100: rgba(34,197,94,0.12);
+    --primary-200: rgba(34,197,94,0.22);
+    --bg-primary: #030d07;
+    --bg-secondary: #071409;
+    --bg-tertiary: #0c1e0f;
+    --bg-card: #071409;
+    --bg-card-hover: #0c1e0f;
+    --bg-nav: rgba(3,13,7,0.95);
+    --bg-input: #071409;
+    --text-primary: #dcfce7;
+    --text-secondary: #86c99a;
+    --text-muted: #4a8a5e;
+    --text-link: #22c55e;
+    --border-color: rgba(34,197,94,0.14);
+    --border-light: rgba(34,197,94,0.08);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 16px 48px rgba(0,0,0,0.45);
+}
+
+/* Rose — deep rose/pink dark */
+body.theme-rose {
+    --primary: #f43f5e;
+    --primary-light: #e11d48;
+    --primary-dark: #be123c;
+    --primary-50: rgba(244,63,94,0.05);
+    --primary-100: rgba(244,63,94,0.12);
+    --primary-200: rgba(244,63,94,0.22);
+    --bg-primary: #0f0408;
+    --bg-secondary: #1a060d;
+    --bg-tertiary: #220912;
+    --bg-card: #1a060d;
+    --bg-card-hover: #220912;
+    --bg-nav: rgba(15,4,8,0.95);
+    --bg-input: #1a060d;
+    --text-primary: #ffe4e6;
+    --text-secondary: #d4909a;
+    --text-muted: #8a4a55;
+    --text-link: #f43f5e;
+    --border-color: rgba(244,63,94,0.14);
+    --border-light: rgba(244,63,94,0.08);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 16px 48px rgba(0,0,0,0.45);
+}
+
+/* Midnight — deep indigo/violet */
+body.theme-midnight {
+    --primary: #818cf8;
+    --primary-light: #6366f1;
+    --primary-dark: #4f46e5;
+    --primary-50: rgba(129,140,248,0.05);
+    --primary-100: rgba(129,140,248,0.12);
+    --primary-200: rgba(129,140,248,0.22);
+    --bg-primary: #06060f;
+    --bg-secondary: #0d0d1f;
+    --bg-tertiary: #12122a;
+    --bg-card: #0d0d1f;
+    --bg-card-hover: #12122a;
+    --bg-nav: rgba(6,6,15,0.95);
+    --bg-input: #0d0d1f;
+    --text-primary: #e0e7ff;
+    --text-secondary: #9aa0d4;
+    --text-muted: #555a8a;
+    --text-link: #818cf8;
+    --border-color: rgba(129,140,248,0.14);
+    --border-light: rgba(129,140,248,0.08);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 16px 48px rgba(0,0,0,0.45);
+}
+
+/* Amber — warm amber/orange dark */
+body.theme-amber {
+    --primary: #f59e0b;
+    --primary-light: #d97706;
+    --primary-dark: #b45309;
+    --primary-50: rgba(245,158,11,0.05);
+    --primary-100: rgba(245,158,11,0.12);
+    --primary-200: rgba(245,158,11,0.22);
+    --bg-primary: #0d0900;
+    --bg-secondary: #1a1000;
+    --bg-tertiary: #221600;
+    --bg-card: #1a1000;
+    --bg-card-hover: #221600;
+    --bg-nav: rgba(13,9,0,0.95);
+    --bg-input: #1a1000;
+    --text-primary: #fef3c7;
+    --text-secondary: #d4b06a;
+    --text-muted: #8a6a30;
+    --text-link: #f59e0b;
+    --border-color: rgba(245,158,11,0.14);
+    --border-light: rgba(245,158,11,0.08);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    --shadow-xl: 0 16px 48px rgba(0,0,0,0.45);
+}
+
 /* Light Theme */
 body.light {
     --bg-primary: #f7f9fb;
@@ -2308,4 +2447,145 @@ textarea.hire-form-input {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-light);
+}
+
+/* ============================================
+   GLOBAL THEME-AWARE OVERRIDES
+   Ensures every dialog, popup, overlay, card,
+   input, button inherits the active theme vars
+   ============================================ */
+
+/* SweetAlert2 — theme-aware */
+.swal2-popup {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--shadow-xl) !important;
+    color: var(--text-primary) !important;
+}
+.swal2-title { color: var(--text-primary) !important; }
+.swal2-html-container { color: var(--text-secondary) !important; }
+.swal2-input, .swal2-textarea, .swal2-select {
+    background: var(--bg-input) !important;
+    border: 1.5px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: var(--radius-md) !important;
+}
+.swal2-input:focus, .swal2-textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary-100) !important;
+}
+.swal2-confirm {
+    background: var(--primary) !important;
+    border-radius: var(--radius-md) !important;
+}
+.swal2-cancel {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-muted) !important;
+    border-radius: var(--radius-md) !important;
+}
+.swal2-icon { border-color: var(--border-color) !important; }
+.swal2-icon.swal2-warning { border-color: #f59e0b !important; color: #f59e0b !important; }
+.swal2-icon.swal2-error { border-color: #ef4444 !important; color: #ef4444 !important; }
+.swal2-icon.swal2-success { border-color: #22c55e !important; color: #22c55e !important; }
+.swal2-icon.swal2-question { border-color: var(--primary) !important; color: var(--primary) !important; }
+.swal2-timer-progress-bar { background: var(--primary) !important; }
+.swal2-validation-message {
+    background: rgba(239,68,68,0.1) !important;
+    color: #f87171 !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+/* All modals/dialogs — theme-aware */
+.modal, .md-dialog, .tfa-dialog,
+[class*="-modal"], [class*="-dialog"], [class*="-popup"] {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* All inputs globally — theme-aware */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea, select {
+    background: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+/* Scrollbars inside dialogs */
+.md-dialog::-webkit-scrollbar,
+.tfa-dialog::-webkit-scrollbar,
+.modal::-webkit-scrollbar,
+.aps-panel-body::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar { width: 4px; }
+.md-dialog::-webkit-scrollbar-thumb,
+.tfa-dialog::-webkit-scrollbar-thumb,
+.modal::-webkit-scrollbar-thumb,
+.aps-panel-body::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--primary-200);
+    border-radius: 4px;
+}
+
+/* Light theme — fix hardcoded dark values in components */
+body.light .an-kpi,
+body.light .an-card,
+body.light .sk-kpi-card,
+body.light .sk-card {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+body.light .sk-bar,
+body.light .sk-th,
+body.light .sk-kpi-icon,
+body.light .sk-kpi-num,
+body.light .sk-kpi-lbl,
+body.light .sk-list-icon,
+body.light .sk-list-time {
+    background: var(--bg-tertiary);
+}
+body.light .an-browser-badge,
+body.light .an-os-badge {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+body.light .an-meta {
+    background: var(--bg-card);
+    border-color: var(--border-light);
+    color: var(--text-muted);
+}
+
+/* All theme variants — ensure dialog backgrounds use vars */
+body.theme-ocean .md-dialog,
+body.theme-forest .md-dialog,
+body.theme-rose .md-dialog,
+body.theme-midnight .md-dialog,
+body.theme-amber .md-dialog,
+body.theme-ocean .tfa-dialog,
+body.theme-forest .tfa-dialog,
+body.theme-rose .tfa-dialog,
+body.theme-midnight .tfa-dialog,
+body.theme-amber .tfa-dialog {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+body.theme-ocean .md-dialog-header,
+body.theme-forest .md-dialog-header,
+body.theme-rose .md-dialog-header,
+body.theme-midnight .md-dialog-header,
+body.theme-amber .md-dialog-header,
+body.theme-ocean .tfa-header,
+body.theme-forest .tfa-header,
+body.theme-rose .tfa-header,
+body.theme-midnight .tfa-header,
+body.theme-amber .tfa-header,
+body.theme-ocean .tfa-footer,
+body.theme-forest .tfa-footer,
+body.theme-rose .tfa-footer,
+body.theme-midnight .tfa-footer,
+body.theme-amber .tfa-footer {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
 }

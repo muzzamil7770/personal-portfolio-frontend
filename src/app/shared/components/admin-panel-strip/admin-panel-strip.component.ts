@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { ThemeService, THEMES, AppTheme } from '../../../core/services/theme.service';
 
 interface StatsData {
   watching: number; today: number; thisMonth: number; allTime: number;
@@ -14,7 +15,7 @@ interface StatsData {
 
 const PROJECTS = [
   {
-    name: 'Stepping Stone Therapy | Pathways EHR', icon: '🏥',
+    name: 'Stepping Stone Therapy | Pathways EHR', icon: 'fas fa-hospital',
     desc: 'Full-featured medical practice management system with appointment scheduling, patient records, and insurance integration.',
     stack: ['Angular 19', 'TypeScript', 'Angular Material', 'Bootstrap 5', 'Firebase', 'Socket.io', 'Chart.js', 'RxJS'],
     methodology: 'Agile / Scrum — 2-week sprints, daily standups, Jira board',
@@ -24,7 +25,7 @@ const PROJECTS = [
     emailFlow: ['Appointment confirmation → Patient email', 'Reminder 24h before → Nodemailer', 'Insurance claim status → Admin notification']
   },
   {
-    name: 'FirstCall | TeleHealth EHR', icon: '📞',
+    name: 'FirstCall | TeleHealth EHR', icon: 'fas fa-phone-alt',
     desc: 'Multi-role healthcare platform with patient management, encounters, analytics, and secure RBAC.',
     stack: ['Angular 19', 'TypeScript', 'Angular Material', 'Bootstrap 5', 'Firebase', 'Chart.js', 'RxJS'],
     methodology: 'Agile / Kanban — continuous delivery, weekly reviews',
@@ -34,7 +35,7 @@ const PROJECTS = [
     emailFlow: ['Encounter summary → Patient email', 'Appointment reminders → Automated scheduler']
   },
   {
-    name: 'SNF Wound Care – EMR & Telemedicine', icon: '🩺',
+    name: 'SNF Wound Care – EMR & Telemedicine', icon: 'fas fa-stethoscope',
     desc: 'HIPAA-compliant EMR serving 12,000+ patients across 178 skilled nursing facilities.',
     stack: ['React', 'Laravel', 'MySQL', 'Google Cloud', 'HIPAA'],
     methodology: 'Waterfall + Agile hybrid — compliance-driven development',
@@ -50,33 +51,32 @@ const PROJECTS = [
   standalone: true,
   imports: [CommonModule, DatePipe],
   template: `
-    <div class="aps-strip" (mouseenter)="open()" (click)="open()" [class.panel-open]="isOpen">
-      <span class="aps-strip-icon">⚡</span>
-      <span class="aps-strip-label">Admin</span>
-    </div>
+    <div class="aps-wrapper" (mouseenter)="onEnter()" (mouseleave)="onLeave()">
 
-    <div class="aps-backdrop" [class.visible]="isOpen" (click)="close()"></div>
+      <div class="aps-strip" [class.panel-open]="isOpen">
+              <span class="aps-strip-label">Admin</span>
+      </div>
 
-    <div class="aps-panel" [class.open]="isOpen">
+      <div class="aps-panel" [class.open]="isOpen">
       <div class="aps-panel-header">
-        <span class="aps-panel-title">⚡ Portfolio Panel</span>
-        <button class="aps-close" (click)="close()">✕</button>
+        <span class="aps-panel-title"><i class="fas fa-bolt"></i> Portfolio Panel</span>
+        <button class="aps-close" (click)="isOpen = false"><i class="fas fa-times"></i></button>
       </div>
 
       <div class="aps-panel-body">
 
         <!-- Admin Portal -->
         <div class="aps-section">
-          <div class="aps-section-label">🔐 Admin Portal</div>
+          <div class="aps-section-label"><i class="fas fa-shield-alt"></i> Admin Portal</div>
           <button class="aps-admin-btn" (click)="goAdmin()">
             <span>Access Admin Portal</span>
-            <span>→</span>
+            <i class="fas fa-arrow-right"></i>
           </button>
         </div>
 
         <!-- Analytics -->
         <div class="aps-section">
-          <div class="aps-section-label">📊 Real-Time Analytics</div>
+          <div class="aps-section-label"><i class="fas fa-chart-line"></i> Real-Time Analytics</div>
           <div class="aps-live-row">
             <span class="aps-live-dot"></span>
             <span class="aps-live-text">{{ liveCount }} {{ liveCount === 1 ? 'person' : 'people' }} watching now</span>
@@ -128,51 +128,51 @@ const PROJECTS = [
 
         <!-- Project Details -->
         <div class="aps-section">
-          <div class="aps-section-label">🚀 Project Details</div>
+          <div class="aps-section-label"><i class="fas fa-rocket"></i> Project Details</div>
           <div class="aps-projects">
             <div class="aps-project" *ngFor="let p of projects; let i = index">
               <div class="aps-project-header" (click)="toggleProject(i)">
-                <span>{{ p.icon }} {{ p.name }}</span>
-                <span class="aps-chevron" [class.rotated]="openProject === i">▾</span>
+                <span><i [class]="p.icon"></i> {{ p.name }}</span>
+                <i class="fas fa-chevron-down aps-chevron" [class.rotated]="openProject === i"></i>
               </div>
               <div class="aps-project-body" *ngIf="openProject === i">
                 <p class="aps-proj-desc">{{ p.desc }}</p>
 
                 <div class="aps-proj-block">
-                  <div class="aps-proj-block-title">🛠 Stack</div>
+                  <div class="aps-proj-block-title"><i class="fas fa-tools"></i> Stack</div>
                   <div class="aps-tags">
                     <span class="aps-tag" *ngFor="let s of p.stack">{{ s }}</span>
                   </div>
                 </div>
 
                 <div class="aps-proj-block">
-                  <div class="aps-proj-block-title">📋 Methodology</div>
+                  <div class="aps-proj-block-title"><i class="fas fa-clipboard-list"></i> Methodology</div>
                   <p class="aps-proj-text">{{ p.methodology }}</p>
                 </div>
 
                 <div class="aps-proj-block">
-                  <div class="aps-proj-block-title">✨ Features</div>
+                  <div class="aps-proj-block-title"><i class="fas fa-star"></i> Features</div>
                   <ul class="aps-list">
                     <li *ngFor="let f of p.features">{{ f }}</li>
                   </ul>
                 </div>
 
                 <div class="aps-proj-block">
-                  <div class="aps-proj-block-title">🖥 UI Flow</div>
+                  <div class="aps-proj-block-title"><i class="fas fa-desktop"></i> UI Flow</div>
                   <ul class="aps-list">
                     <li *ngFor="let step of p.uiFlow">{{ step }}</li>
                   </ul>
                 </div>
 
                 <div class="aps-proj-block">
-                  <div class="aps-proj-block-title">🔐 Auth Flow</div>
+                  <div class="aps-proj-block-title"><i class="fas fa-lock"></i> Auth Flow</div>
                   <ul class="aps-list">
                     <li *ngFor="let a of p.authFlow">{{ a }}</li>
                   </ul>
                 </div>
 
                 <div class="aps-proj-block">
-                  <div class="aps-proj-block-title">📧 Email Flow</div>
+                  <div class="aps-proj-block-title"><i class="fas fa-envelope"></i> Email Flow</div>
                   <ul class="aps-list">
                     <li *ngFor="let e of p.emailFlow">{{ e }}</li>
                   </ul>
@@ -182,33 +182,47 @@ const PROJECTS = [
           </div>
         </div>
 
+        <!-- Theme Picker -->
+        <div class="aps-section">
+          <div class="aps-section-label"><i class="fas fa-palette"></i> Theme</div>
+          <div class="aps-theme-grid">
+            <button
+              *ngFor="let t of themes"
+              class="aps-theme-chip"
+              [class.active]="currentTheme === t.id"
+              [title]="t.label"
+              (click)="applyTheme(t)">
+              <i [class]="t.icon"></i>
+              <span>{{ t.label }}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
       </div>
     </div>
   `,
   styles: [`
-    .aps-strip {
+    .aps-wrapper {
       position: fixed; bottom: 120px; right: 0; z-index: 1100;
+      display: flex; align-items: flex-start;
+    }
+
+    .aps-strip {
       background: var(--primary);
       color: #fff; writing-mode: vertical-rl; text-orientation: mixed;
       padding: 14px 8px; border-radius: 10px 0 0 10px;
       cursor: pointer; display: flex; flex-direction: column;
-      align-items: center; gap: 6px;
+      align-items: center; gap: 6px; flex-shrink: 0;
       box-shadow: -3px 3px 16px var(--primary-200);
-      transition: transform 0.2s, box-shadow 0.2s; user-select: none;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+      user-select: none;
     }
-    .aps-strip:hover, .aps-strip.panel-open {
-      transform: translateX(-4px);
-      box-shadow: -5px 4px 22px var(--primary-200);
+    .aps-strip.panel-open {
+      opacity: 0; pointer-events: none; transform: translateX(10px);
     }
-    .aps-strip-icon { font-size: 1rem; writing-mode: horizontal-tb; }
+    .aps-strip-icon { font-size: 1rem; color: #fff; }
     .aps-strip-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; }
-
-    .aps-backdrop {
-      position: fixed; inset: 0; z-index: 1099;
-      background: rgba(0,0,0,.45); opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    .aps-backdrop.visible { opacity: 1; pointer-events: all; }
 
     .aps-panel {
       position: fixed; top: 0; right: 0; bottom: 0; z-index: 1100;
@@ -216,10 +230,14 @@ const PROJECTS = [
       background: var(--bg-card); border-left: 1px solid var(--border-color);
       display: flex; flex-direction: column;
       transform: translateX(100%);
-      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s ease;
+      opacity: 0;
       box-shadow: -8px 0 40px rgba(0,0,0,.4);
+      pointer-events: none;
     }
-    .aps-panel.open { transform: translateX(0); }
+    .aps-panel.open {
+      transform: translateX(0); opacity: 1; pointer-events: all;
+    }
 
     .aps-panel-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -324,14 +342,16 @@ const PROJECTS = [
       font-size: 0.82rem; font-weight: 600; transition: background 0.2s;
     }
     .aps-project-header:hover { background: var(--primary-100); color: var(--primary); }
-    .aps-chevron { color: var(--text-muted); transition: transform 0.25s; font-size: 0.9rem; }
+    .aps-chevron { color: var(--text-muted); transition: transform 0.25s; font-size: 0.75rem; }
     .aps-chevron.rotated { transform: rotate(180deg); }
     .aps-project-body { padding: 0 0.85rem 0.85rem; display: flex; flex-direction: column; gap: 0.65rem; }
     .aps-proj-desc { color: var(--text-secondary); font-size: 0.78rem; margin: 0; line-height: 1.5; }
     .aps-proj-block-title {
       color: var(--text-muted); font-size: 0.68rem; font-weight: 700;
       letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 5px;
+      display: flex; align-items: center; gap: 5px;
     }
+    .aps-proj-block-title i { color: var(--primary); font-size: 0.65rem; }
     .aps-proj-text { color: var(--text-secondary); font-size: 0.78rem; margin: 0; }
     .aps-tags { display: flex; flex-wrap: wrap; gap: 5px; }
     .aps-tag {
@@ -340,23 +360,43 @@ const PROJECTS = [
     }
     .aps-list { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 3px; }
     .aps-list li { color: var(--text-secondary); font-size: 0.76rem; }
+
+    /* Theme picker */
+    .aps-theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .aps-theme-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 8px; border-radius: 7px; border: 1.5px solid var(--border-color);
+      background: var(--bg-tertiary); color: var(--text-muted);
+      cursor: pointer; font-size: 0.72rem; font-weight: 600;
+      transition: all 0.18s; font-family: inherit;
+    }
+    .aps-theme-chip i { font-size: 0.7rem; }
+    .aps-theme-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-100); }
+    .aps-theme-chip.active {
+      border-color: var(--primary); background: var(--primary);
+      color: #fff; box-shadow: 0 2px 8px var(--primary-200);
+    }
   `]
 })
 export class AdminPanelStripComponent implements OnInit, OnDestroy {
   isOpen = false;
-  liveCount = 0;
+  liveCount = 1;
   stats: StatsData | null = null;
   isAdmin = false;
   openProject: number | null = null;
   projects = PROJECTS;
+  themes: AppTheme[] = THEMES;
+  currentTheme = 'dark';
 
   private sessionId = '';
   private pollSub?: Subscription;
   private isBrowser: boolean;
+  private closeTimer: any;
 
   constructor(
     private http: HttpClient,
     private router: Router,
+    private themeService: ThemeService,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -369,9 +409,13 @@ export class AdminPanelStripComponent implements OnInit, OnDestroy {
     this.checkAdmin();
     this.trackVisit();
     this.fetchLive();
-    this.pollSub = interval(30000).pipe(
+    this.themeService.current$.subscribe(id => this.currentTheme = id);
+
+    this.pollSub = interval(5000).pipe(
       switchMap(() => this.http.get<{ success: boolean; watching: number }>(`${environment.apiUrl}/analytics/live`))
     ).subscribe(r => { if (r.success) this.liveCount = r.watching; });
+
+    interval(30000).subscribe(() => this.sendHeartbeat());
   }
 
   ngOnDestroy() { this.pollSub?.unsubscribe(); }
@@ -385,6 +429,13 @@ export class AdminPanelStripComponent implements OnInit, OnDestroy {
       const p = JSON.parse(atob(token.split('.')[1]));
       this.isAdmin = p.exp * 1000 > Date.now() && p.role === 'admin';
     } catch { this.isAdmin = false; }
+  }
+
+  private sendHeartbeat() {
+    this.http.post(`${environment.apiUrl}/analytics/heartbeat`, {
+      sessionId: this.sessionId,
+      page: window.location.pathname
+    }).subscribe();
   }
 
   private trackVisit() {
@@ -401,15 +452,21 @@ export class AdminPanelStripComponent implements OnInit, OnDestroy {
       .subscribe(r => { if (r.success) this.liveCount = r.watching; });
   }
 
-  open() {
+  onEnter() {
+    clearTimeout(this.closeTimer);
     this.isOpen = true;
     this.checkAdmin();
     if (this.isAdmin) this.loadStats();
   }
 
-  close() { this.isOpen = false; }
+  onLeave() {
+    // 300ms delay so accidental mouse-out doesn't flicker
+    this.closeTimer = setTimeout(() => { this.isOpen = false; }, 300);
+  }
 
-  goAdmin() { this.close(); this.router.navigate(['/admin']); }
+  applyTheme(t: AppTheme) { this.themeService.setTheme(t.id); }
+
+  goAdmin() { this.isOpen = false; this.router.navigate(['/admin']); }
 
   toggleProject(i: number) { this.openProject = this.openProject === i ? null : i; }
 
