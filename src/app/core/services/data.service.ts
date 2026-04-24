@@ -402,72 +402,72 @@ export class DataService {
           "assets/projects/firstcall/7.png"
         ]
       },
-      {
-        id: "project3",
-        title: "SNF Wound Care – EMR & Telemedicine",
-        description: "HIPAA-compliant EMR platform serving 12,000+ patients across 178 skilled nursing facilities with video consultation, wound image tracking, and PCC/MatrixCare EMR integration.",
-        image: "assets/SNF Wound Care (Case Study Design).png",
-        techs: ["React", "Laravel", "MySQL", "HIPAA"],
-        detailTitle: "SNF Wound Care – EMR & Telemedicine Platform",
-        detailDescription: "A HIPAA-compliant Electronic Medical Records platform serving 12,000+ patients across 178 skilled nursing facilities. Features video consultation, wound image tracking, clinical documentation, and integration with PCC/MatrixCare EMR systems.",
-        projectFlow: [
-          "Clinician logs in → Dashboard shows assigned patients and visits",
-          "Visit initiated with patient selection and history review",
-          "Wound assessment with image capture and annotation",
-          "Treatment plan creation with medication orders",
-          "Documentation submitted to EMR (PCC/MatrixCare)",
-          "Billing codes generated for insurance submission"
-        ],
-        features: [
-          "HIPAA-compliant patient data management and encryption",
-          "Video consultation integration for telemedicine visits",
-          "Wound image capture with annotation and tracking",
-          "Clinical documentation templates for wound care",
-          "PCC/MatrixCare EMR integration for data sync",
-          "Multi-facility support across 178 skilled nursing facilities",
-          "Patient scheduling and visit management",
-          "Billing code generation and insurance submission",
-          "Analytics dashboard for clinical outcomes tracking",
-          "Mobile-responsive design for on-the-go documentation",
-          "Role-based access for clinicians, nurses, and administrators",
-          "Audit logging for compliance tracking"
-        ],
-        howItWorks: "The platform uses React for a responsive frontend with component-based architecture, communicating with a Laravel backend via RESTful APIs. Patient data is encrypted at rest and in transit to meet HIPAA requirements. Wound images are stored securely with metadata for tracking healing progress over time. Integration with PCC/MatrixCare EMR systems allows seamless data exchange between platforms.",
-        methodsUsed: [
-          "React with functional components and hooks",
-          "Laravel RESTful API with JWT authentication",
-          "MySQL database with encrypted patient records",
-          "HIPAA-compliant data encryption (AES-256)",
-          "RESTful API design with versioning",
-          "React Router for client-side navigation",
-          "Formik + Yup for form validation",
-          "Axios with interceptors for API calls",
-          "React Query for server state management",
-          "Responsive CSS Grid and Flexbox layouts"
-        ],
-        strengths: [
-          "HIPAA compliance with end-to-end encryption",
-          "Serving 12,000+ patients across 178 facilities",
-          "Complex EMR integration with PCC/MatrixCare",
-          "Wound image tracking with annotation tools",
-          "Scalable multi-tenant architecture",
-          "Real-time data synchronization across facilities",
-          "Comprehensive audit logging for compliance",
-          "Mobile-optimized for point-of-care documentation"
-        ],
-        techStack: [
-          { name: "React" },
-          { name: "Laravel" },
-          { name: "MySQL" },
-          { name: "HIPAA Compliance" },
-          { name: "JWT Auth" },
-          { name: "REST API" },
-          { name: "React Query" }
-        ],
-        images: [
-          "assets/SNF Wound Care (Case Study Design).png"
-        ]
-      }
+      // {
+      //   id: "project3",
+      //   title: "SNF Wound Care – EMR & Telemedicine",
+      //   description: "HIPAA-compliant EMR platform serving 12,000+ patients across 178 skilled nursing facilities with video consultation, wound image tracking, and PCC/MatrixCare EMR integration.",
+      //   image: "assets/SNF Wound Care (Case Study Design).png",
+      //   techs: ["React", "Laravel", "MySQL", "HIPAA"],
+      //   detailTitle: "SNF Wound Care – EMR & Telemedicine Platform",
+      //   detailDescription: "A HIPAA-compliant Electronic Medical Records platform serving 12,000+ patients across 178 skilled nursing facilities. Features video consultation, wound image tracking, clinical documentation, and integration with PCC/MatrixCare EMR systems.",
+      //   projectFlow: [
+      //     "Clinician logs in → Dashboard shows assigned patients and visits",
+      //     "Visit initiated with patient selection and history review",
+      //     "Wound assessment with image capture and annotation",
+      //     "Treatment plan creation with medication orders",
+      //     "Documentation submitted to EMR (PCC/MatrixCare)",
+      //     "Billing codes generated for insurance submission"
+      //   ],
+      //   features: [
+      //     "HIPAA-compliant patient data management and encryption",
+      //     "Video consultation integration for telemedicine visits",
+      //     "Wound image capture with annotation and tracking",
+      //     "Clinical documentation templates for wound care",
+      //     "PCC/MatrixCare EMR integration for data sync",
+      //     "Multi-facility support across 178 skilled nursing facilities",
+      //     "Patient scheduling and visit management",
+      //     "Billing code generation and insurance submission",
+      //     "Analytics dashboard for clinical outcomes tracking",
+      //     "Mobile-responsive design for on-the-go documentation",
+      //     "Role-based access for clinicians, nurses, and administrators",
+      //     "Audit logging for compliance tracking"
+      //   ],
+      //   howItWorks: "The platform uses React for a responsive frontend with component-based architecture, communicating with a Laravel backend via RESTful APIs. Patient data is encrypted at rest and in transit to meet HIPAA requirements. Wound images are stored securely with metadata for tracking healing progress over time. Integration with PCC/MatrixCare EMR systems allows seamless data exchange between platforms.",
+      //   methodsUsed: [
+      //     "React with functional components and hooks",
+      //     "Laravel RESTful API with JWT authentication",
+      //     "MySQL database with encrypted patient records",
+      //     "HIPAA-compliant data encryption (AES-256)",
+      //     "RESTful API design with versioning",
+      //     "React Router for client-side navigation",
+      //     "Formik + Yup for form validation",
+      //     "Axios with interceptors for API calls",
+      //     "React Query for server state management",
+      //     "Responsive CSS Grid and Flexbox layouts"
+      //   ],
+      //   strengths: [
+      //     "HIPAA compliance with end-to-end encryption",
+      //     "Serving 12,000+ patients across 178 facilities",
+      //     "Complex EMR integration with PCC/MatrixCare",
+      //     "Wound image tracking with annotation tools",
+      //     "Scalable multi-tenant architecture",
+      //     "Real-time data synchronization across facilities",
+      //     "Comprehensive audit logging for compliance",
+      //     "Mobile-optimized for point-of-care documentation"
+      //   ],
+      //   techStack: [
+      //     { name: "React" },
+      //     { name: "Laravel" },
+      //     { name: "MySQL" },
+      //     { name: "HIPAA Compliance" },
+      //     { name: "JWT Auth" },
+      //     { name: "REST API" },
+      //     { name: "React Query" }
+      //   ],
+      //   images: [
+      //     "assets/SNF Wound Care (Case Study Design).png"
+      //   ]
+      // }
     ],
 
     testimonials: [

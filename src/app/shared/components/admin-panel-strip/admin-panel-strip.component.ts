@@ -34,16 +34,16 @@ const PROJECTS = [
     authFlow: ['JWT tokens with HTTP interceptor', 'Custom canActivate guards per role', 'Token refresh on 401'],
     emailFlow: ['Encounter summary → Patient email', 'Appointment reminders → Automated scheduler']
   },
-  {
-    name: 'SNF Wound Care – EMR & Telemedicine', icon: 'fas fa-stethoscope',
-    desc: 'HIPAA-compliant EMR serving 12,000+ patients across 178 skilled nursing facilities.',
-    stack: ['React', 'Laravel', 'MySQL', 'Google Cloud', 'HIPAA'],
-    methodology: 'Waterfall + Agile hybrid — compliance-driven development',
-    features: ['12,000+ patients across 178 SNFs', 'PointClickCare & MatrixCare integration', 'Video consultation', 'Wound image tracking', 'Encounter notes & progress timeline', 'Secure authentication & RBAC', 'HIPAA data privacy on Google Cloud'],
-    uiFlow: ['Facility Login → Patient List → Wound Assessment', 'Video Consult → Encounter Notes → Sign-off', 'Admin → Facility Management → Reports'],
-    authFlow: ['HIPAA-compliant auth', 'Role-based access (Clinician / Admin / Facility)', 'Audit logging for all data access'],
-    emailFlow: ['Wound assessment reports → Care team', 'Video consult summaries → Patient records', 'Compliance alerts → Admin']
-  }
+  // {
+  //   name: 'SNF Wound Care – EMR & Telemedicine', icon: 'fas fa-stethoscope',
+  //   desc: 'HIPAA-compliant EMR serving 12,000+ patients across 178 skilled nursing facilities.',
+  //   stack: ['React', 'Laravel', 'MySQL', 'Google Cloud', 'HIPAA'],
+  //   methodology: 'Waterfall + Agile hybrid — compliance-driven development',
+  //   features: ['12,000+ patients across 178 SNFs', 'PointClickCare & MatrixCare integration', 'Video consultation', 'Wound image tracking', 'Encounter notes & progress timeline', 'Secure authentication & RBAC', 'HIPAA data privacy on Google Cloud'],
+  //   uiFlow: ['Facility Login → Patient List → Wound Assessment', 'Video Consult → Encounter Notes → Sign-off', 'Admin → Facility Management → Reports'],
+  //   authFlow: ['HIPAA-compliant auth', 'Role-based access (Clinician / Admin / Facility)', 'Audit logging for all data access'],
+  //   emailFlow: ['Wound assessment reports → Care team', 'Video consult summaries → Patient records', 'Compliance alerts → Admin']
+  // }
 ];
 
 @Component({
