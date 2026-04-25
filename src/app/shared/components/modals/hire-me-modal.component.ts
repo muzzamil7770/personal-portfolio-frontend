@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { UiService } from '../../../core/services/ui.service';
 import { ApiService, HireFormData } from '../../../core/services/api.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-hire-me-modal',
@@ -110,8 +111,8 @@ import { ToastService } from '../../../core/services/toast.service';
     </div>
   `,
   styles: [`
-    .field-error { color: #e74c3c; font-size: 0.78rem; margin-top: 4px; display: block; }
-    .is-invalid { border-color: #e74c3c !important; }
+    .field-error { color: var(--error); font-size: 0.78rem; margin-top: 4px; display: block; }
+    .is-invalid { border-color: var(--error) !important; }
   `]
 })
 export class HireMeModalComponent {
@@ -123,7 +124,8 @@ export class HireMeModalComponent {
     public uiService: UiService,
     private fb: FormBuilder,
     private apiService: ApiService,
-    private toast: ToastService
+    private toast: ToastService,
+    private notificationService: NotificationService
   ) {
     this.hireForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -150,6 +152,13 @@ export class HireMeModalComponent {
     if (this.hireForm.invalid) {
       this.hireForm.markAllAsTouched();
       this.toast.error('Invalid Form', 'Please fill in all required fields correctly.');
+      this.notificationService.addNotification(
+        'Hire Form Error', 
+        'Inquiry submission failed due to invalid inputs.', 
+        'fas fa-exclamation-triangle', 
+        'system', 
+        'warning'
+      );
       return;
     }
 
@@ -170,9 +179,16 @@ export class HireMeModalComponent {
         );
         setTimeout(() => this.closeModal(), 1500);
       },
-      error: (err: Error) => {
+      error: (err: any) => {
         this.isSubmitting = false;
-        this.toast.error('Failed to Send', err.message);
+        this.toast.error('Failed to Send', err.message || 'Server error');
+        this.notificationService.addNotification(
+          'Inquiry Failed', 
+          `Hire request for "${formData.services}" failed: ${err.message || 'Server error'}`, 
+          'fas fa-times-circle', 
+          'hire', 
+          'error'
+        );
       }
     });
   }

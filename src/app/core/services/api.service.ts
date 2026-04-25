@@ -21,6 +21,18 @@ export interface HireFormData {
   services?: string;
 }
 
+export interface MeetingData {
+  name: string;
+  email: string;
+  date: string;
+  time: string;
+  topic: string;
+}
+
+export interface AvailabilityResponse extends ApiResponse {
+  available: boolean;
+}
+
 export interface ApiResponse {
   success: boolean;
   message: string;
@@ -33,7 +45,7 @@ export interface ApiResponse {
 export class ApiService {
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient, private cooldown: CooldownService, private toast: ToastService) {}
+  constructor(private http: HttpClient, private cooldown: CooldownService, private toast: ToastService) { }
 
   submitContactForm(data: ContactFormData): Observable<ApiResponse> {
     return this.http
@@ -44,6 +56,48 @@ export class ApiService {
   submitHireForm(data: HireFormData): Observable<ApiResponse> {
     return this.http
       .post<ApiResponse>(`${this.apiUrl}/hire`, data)
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  scheduleMeeting(data: MeetingData): Observable<ApiResponse> {
+    return this.http
+      .post<ApiResponse>(`${this.apiUrl}/meetings/schedule`, data)
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  checkAvailability(date: string, time: string): Observable<AvailabilityResponse> {
+    return this.http
+      .get<AvailabilityResponse>(`${this.apiUrl}/meetings/check-availability`, { params: { date, time } })
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  getMeetings(): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/meetings`)
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  getPublicMeetings(): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/meetings/public`)
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  getAvailability(): Observable<any> {
+    return this.http
+      .get<any>(`${this.apiUrl}/availability`)
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  setAvailability(date: string, slots: string[]): Observable<ApiResponse> {
+    return this.http
+      .post<ApiResponse>(`${this.apiUrl}/availability`, { date, slots })
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  deleteAvailability(id: string): Observable<ApiResponse> {
+    return this.http
+      .delete<ApiResponse>(`${this.apiUrl}/availability/${id}`)
       .pipe(catchError(err => this.handleError(err)));
   }
 

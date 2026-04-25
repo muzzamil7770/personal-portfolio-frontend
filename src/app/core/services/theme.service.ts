@@ -1,6 +1,7 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
+import { CookieService } from './cookie.service';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 export interface AppTheme {
   id: string;
@@ -27,20 +28,23 @@ export class ThemeService {
   private _current = new BehaviorSubject<string>('dark');
   current$ = this._current.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cookieService: CookieService
+  ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   initTheme(): void {
     if (!this.isBrowser) return;
-    const saved = localStorage.getItem(THEME_KEY) || 'dark';
+    const saved = this.cookieService.get(THEME_KEY) || 'dark';
     this.applyTheme(saved);
   }
 
   setTheme(id: string): void {
     if (!this.isBrowser) return;
     this.applyTheme(id);
-    localStorage.setItem(THEME_KEY, id);
+    this.cookieService.set(THEME_KEY, id, 30); // 30 days
   }
 
   toggleTheme(): void {

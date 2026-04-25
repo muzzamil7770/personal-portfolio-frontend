@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CookieService } from '../../core/services/cookie.service';
 
 interface Conversation {
   id: string;
@@ -439,7 +440,10 @@ export class ConversationsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) {}
 
   ngOnInit(): void {
     this.loadConversations();
@@ -452,7 +456,7 @@ export class ConversationsComponent implements OnInit, OnDestroy {
   }
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('admin_token');
+    const token = this.cookieService.get('admin_token');
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 

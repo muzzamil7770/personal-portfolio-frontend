@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { CookieService } from './cookie.service';
 
 export interface ChatMessage {
   sender: 'user' | 'ai' | 'system';
@@ -47,7 +48,10 @@ export class AiChatService {
   private isTypingSubject = new BehaviorSubject<boolean>(false);
   isTyping$ = this.isTypingSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) {
     this.loadSession();
   }
 
@@ -55,10 +59,10 @@ export class AiChatService {
    * Load or create session ID
    */
   private loadSession(): void {
-    this.sessionId = localStorage.getItem('chat_session_id');
+    this.sessionId = this.cookieService.get('chat_session_id');
     if (!this.sessionId) {
       this.sessionId = this.generateSessionId();
-      localStorage.setItem('chat_session_id', this.sessionId);
+      this.cookieService.set('chat_session_id', this.sessionId, 7);
     }
   }
 
@@ -120,7 +124,7 @@ export class AiChatService {
           // Update session if server returned a new one
           if (response.data.sessionId) {
             this.sessionId = response.data.sessionId;
-            localStorage.setItem('chat_session_id', this.sessionId);
+            this.cookieService.set('chat_session_id', this.sessionId, 7);
           }
         }
       }),
@@ -139,12 +143,12 @@ export class AiChatService {
       tap(() => {
         this.clearMessages();
         this.sessionId = this.generateSessionId();
-        localStorage.setItem('chat_session_id', this.sessionId);
+        this.cookieService.set('chat_session_id', this.sessionId, 7);
       }),
       catchError(error => {
         this.clearMessages();
         this.sessionId = this.generateSessionId();
-        localStorage.setItem('chat_session_id', this.sessionId);
+        this.cookieService.set('chat_session_id', this.sessionId, 7);
         return throwError(() => error);
       })
     );
@@ -163,7 +167,7 @@ export class AiChatService {
    * Get AI statistics (admin only)
    */
   getStats(): Observable<{ success: boolean; data: ChatStats }> {
-    const token = localStorage.getItem('admin_token');
+    const token = this.cookieService.get('admin_token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     
     return this.http.get<{ success: boolean; data: ChatStats }>(`${this.apiUrl}/chat/stats`, { headers }).pipe(
@@ -176,7 +180,7 @@ export class AiChatService {
    */
   resetSession(): void {
     this.sessionId = this.generateSessionId();
-    localStorage.setItem('chat_session_id', this.sessionId);
+    this.cookieService.set('chat_session_id', this.sessionId, 7);
     this.clearMessages();
   }
 }

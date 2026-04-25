@@ -182,10 +182,20 @@ export class DataService {
     skills: [
       { name: "HTML/CSS", level: 100 },
       { name: "JavaScript", level: 90 },
+      { name: "TypeScript", level: 90 },
+      { name: "Angular 17+", level: 95 },
       { name: "React", level: 85 },
-      { name: "Angular", level: 95 },
-      { name: "Tailwind CSS", level: 85 },
-      { name: "Bootstrap", level: 95 }
+      { name: "Tailwind CSS", level: 90 },
+      { name: "Bootstrap", level: 95 },
+      { name: "MUI / Golden Layout", level: 85 },
+      { name: "Node.js / Laravel", level: 80 },
+      { name: "REST APIs", level: 95 },
+      { name: "MySQL / Firebase", level: 85 },
+      { name: "Git / GitHub", level: 90 },
+      { name: "Figma to Code", level: 95 },
+      { name: "Stripe / Auth", level: 85 },
+      { name: "RxJS / SPA", level: 90 },
+      { name: "Performance Optimization", level: 95 }
     ],
 
     experience: [
@@ -252,6 +262,21 @@ export class DataService {
         icon: "fab fa-git-alt",
         title: "Version Control & Collaboration",
         description: "Efficient code management using Git and GitHub for seamless collaboration, version tracking, and continuous integration workflows in team environments."
+      },
+      {
+        icon: "fas fa-bolt",
+        title: "Real-Time Systems",
+        description: "Developing robust real-time communication systems using Socket.io and Firebase Realtime Database for instant data synchronization."
+      },
+      {
+        icon: "fas fa-credit-card",
+        title: "Payment Gateway Integration",
+        description: "Seamless integration of secure payment gateways like Stripe and Authorize.Net for e-commerce and subscription-based platforms."
+      },
+      {
+        icon: "fas fa-heartbeat",
+        title: "Healthcare Tech Solutions",
+        description: "Building HIPAA-compliant EMR systems, patient portals, and telehealth applications tailored for the modern healthcare industry."
       }
     ],
 
@@ -504,7 +529,7 @@ export class DataService {
         date: "August 1, 2025",
         category: "Tutorial",
         categoryColor: "bg-blue-500",
-        image: "assets/pngwing.com.png",
+        image: "assets/tailwind-css-utility-framework.png",
         excerpt: "Discover why Tailwind CSS remains the fastest way to build responsive, maintainable user interfaces with modern development practices.",
         readTime: "5 min read",
         content: [
@@ -522,7 +547,7 @@ export class DataService {
         date: "July 15, 2025",
         category: "Comparison",
         categoryColor: "bg-purple-500",
-        image: "assets/angular-react.png",
+        image: "assets/react-angular-framework-comparison.png",
         excerpt: "A comprehensive comparison to help developers choose the right frontend framework for their next project based on real-world scenarios.",
         readTime: "8 min read",
         content: [
@@ -533,6 +558,148 @@ export class DataService {
           "Angular provides a complete toolkit with built-in features like routing, forms, HTTP client, and dependency injection. It's perfect for large-scale enterprise applications where structure, type safety, and comprehensive tooling are priorities.",
           "### Making the Right Choice",
           "Choose React if you value flexibility, want a gentler learning curve, or are building a startup MVP. Choose Angular if you need structure, type safety, and comprehensive tooling out of the box for large-scale applications."
+        ]
+      },
+      {
+        id: "blog-post3",
+        title: "Mastering RxJS in Angular Applications",
+        date: "September 10, 2025",
+        category: "Advanced",
+        categoryColor: "bg-red-500",
+        image: "assets/rxjs-reactive-programming-angular.png",
+        excerpt: "Deep dive into reactive programming with RxJS in Angular. Learn how to manage complex asynchronous data streams.",
+        readTime: "7 min read",
+        content: [
+          "RxJS is a powerful library for reactive programming using Observables, making it easier to compose asynchronous or callback-based code. In Angular, it's a core dependency.",
+          "Understanding Operators like switchMap, mergeMap, and exhaustMap is critical for any senior Angular developer.",
+          "By mastering these concepts, you can prevent memory leaks, handle race conditions gracefully, and build highly responsive applications."
+        ]
+      },
+      {
+        id: "blog-post4",
+        title: "Building HIPAA-Compliant Healthcare Apps",
+        date: "October 5, 2025",
+        category: "Industry",
+        categoryColor: "bg-green-500",
+        image: "assets/hipaa-compliant-healthcare-security.png",
+        excerpt: "Essential guidelines and best practices for developing secure, HIPAA-compliant healthcare applications.",
+        readTime: "6 min read",
+        content: [
+          "Developing healthcare applications requires strict adherence to HIPAA regulations to ensure patient data privacy and security.",
+          "Key considerations include end-to-end encryption, secure authentication (like JWT and 2FA), role-based access control, and comprehensive audit logging.",
+          "A robust architecture utilizing secure cloud services is vital for maintaining compliance while delivering seamless user experiences."
+        ]
+      },
+      {
+        id: "blog-post5",
+        title: "Real-Time Data Sync with Firebase",
+        date: "November 20, 2025",
+        category: "Tutorial",
+        categoryColor: "bg-yellow-500",
+        image: "assets/firebase-realtime-database.png",
+        excerpt: "How to leverage Firebase Realtime Database and Cloud Firestore for instant data synchronization across clients.",
+        readTime: "5 min read",
+        content: [
+          "Firebase offers unparalleled solutions for real-time data synchronization. Whether you choose Realtime Database or Cloud Firestore depends on your data structure needs.",
+          "Integrating Firebase with Angular using @angular/fire provides a seamless reactive experience.",
+          "Learn how to set up listeners, manage state, and deploy real-time features like chat or live dashboards."
+        ]
+      },
+      {
+        id: "blog-post6",
+        title: "Optimizing Angular Performance",
+        date: "December 12, 2025",
+        category: "Performance",
+        categoryColor: "bg-blue-600",
+        image: "assets/angular-performance-optimization.png",
+        excerpt: "Strategies to achieve 90+ Lighthouse scores in your Angular applications through lazy loading and change detection strategies.",
+        readTime: "8 min read",
+        content: [
+          "Performance is a critical metric for user retention. In Angular, optimizing performance involves mastering ChangeDetectionStrategy.OnPush.",
+          "Lazy loading modules and standalone components reduce the initial bundle size significantly.",
+          "Additionally, using tools like Angular Universal for SSR can drastically improve First Contentful Paint (FCP) and SEO."
+        ]
+      },
+      {
+        id: "blog-post7",
+        title: "Seamless Stripe Integration in SPAs",
+        date: "January 15, 2026",
+        category: "E-commerce",
+        categoryColor: "bg-indigo-500",
+        image: "assets/stripe-payment-integration.png",
+        excerpt: "A complete guide to integrating Stripe payments securely into your Single Page Applications.",
+        readTime: "6 min read",
+        content: [
+          "Integrating payment gateways like Stripe requires careful handling of sensitive data to maintain PCI compliance.",
+          "Using Stripe Elements ensures that credit card details never hit your servers directly.",
+          "Learn how to manage webhooks, handle subscription models, and provide a frictionless checkout experience."
+        ]
+      },
+      {
+        id: "blog-post8",
+        title: "Modern UI Architecture with Standalone Components",
+        date: "February 28, 2026",
+        category: "Architecture",
+        categoryColor: "bg-pink-500",
+        image: "assets/angular-standalone-components.png",
+        excerpt: "How Angular's standalone components are reshaping the way we architect frontend applications.",
+        readTime: "7 min read",
+        content: [
+          "With the introduction of standalone components, Angular has simplified its mental model by reducing reliance on NgModules.",
+          "This shift allows for more granular lazy loading, easier testing, and cleaner component architecture.",
+          "Explore best practices for migrating existing applications and structuring new projects using the standalone paradigm."
+        ]
+      },
+      {
+        id: "blog-post9",
+        title: "State Management with Angular Signals",
+        date: "March 10, 2026",
+        category: "Tutorial",
+        categoryColor: "bg-teal-500",
+        image: "assets/angular-signals-state-management.png",
+        excerpt: "An introduction to Angular Signals and how they offer a simpler alternative to RxJS for state management.",
+        readTime: "5 min read",
+        content: [
+          "Angular Signals bring a new reactive primitive to the framework, simplifying state management without the complexity of RxJS observables for synchronous data.",
+          "Learn the differences between signal(), computed(), and effect(), and when to use each.",
+          "Signals integrate beautifully with Angular's change detection, resulting in highly performant applications."
+        ]
+      },
+      {
+        id: "blog-post10",
+        title: "The Future of Web Development with AI",
+        date: "April 5, 2026",
+        category: "Trends",
+        categoryColor: "bg-gray-800",
+        image: "assets/ai-assisted-coding-tools.png",
+        excerpt: "Exploring how AI tools like Cursor and GitHub Copilot are changing the developer workflow.",
+        readTime: "4 min read",
+        content: [
+          "AI-assisted coding is no longer a novelty; it's a necessity for modern developers.",
+          "Tools like Cursor AI and GitHub Copilot drastically reduce boilerplate coding, allowing engineers to focus on architecture and complex problem-solving.",
+          "We'll discuss how to effectively integrate AI tools into your daily workflow while maintaining code quality and security."
+        ]
+      },
+      {
+        id: "blog-post11",
+        title: "Building a Smart Calendar Booking System",
+        date: "April 20, 2026",
+        category: "Tutorial",
+        categoryColor: "bg-green-500",
+        image: "assets/calendar-booking.png",
+        excerpt: "Learn how to implement a professional calendar booking system with availability management and real-time updates.",
+        readTime: "6 min read",
+        content: [
+          "A robust calendar booking system is essential for professionals who need to manage client meetings and consultations efficiently.",
+          "### Key Features of a Modern Booking System",
+          "Real-time availability management, instant booking confirmations, automated reminders, and seamless integration with video calling platforms.",
+          "### Admin Panel for Availability",
+          "Admins can set their available time slots through an intuitive calendar interface. The system prevents double-bookings and provides real-time updates to all connected clients.",
+          "### User Experience",
+          "Clients can view available slots, book appointments instantly, and receive confirmation emails with meeting details and virtual room links.",
+          "### Technical Implementation",
+          "Built with Angular, FullCalendar, Socket.io for real-time updates, and secure JWT authentication to protect admin functions.",
+          "This booking system ensures smooth scheduling while maintaining professional standards and user privacy."
         ]
       }
     ],

@@ -3,11 +3,12 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DataService, SiteData, NavItem } from '../../../core/services/data.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { UiService } from '../../../core/services/ui.service';
+import { JoinMeetingBannerComponent } from '../join-meeting-banner/join-meeting-banner.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, JoinMeetingBannerComponent],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })

@@ -1,0 +1,24 @@
+<div class="swiper-container-wrapper" (mouseenter)="isHovered = true" (mouseleave)="isHovered = false">
+  <!-- Swiper wrapper -->
+  <div class="swiper" #swiperContainer>
+    <div class="swiper-wrapper">
+      <div class="swiper-slide" *ngFor="let group of groupedItems; let i = index" [ngClass]="slideClass" 
+           [ngStyle]="{'display': rows > 1 ? 'flex' : '', 'flex-direction': rows > 1 ? 'column' : '', 'gap.px': rows > 1 ? spaceBetween : 0}">
+        <ng-container *ngFor="let item of group">
+          <ng-container *ngTemplateOutlet="slideTemplate; context: { $implicit: item, index: i }"></ng-container>
+        </ng-container>
+      </div>
+    </div>
+    
+    <!-- Custom Pagination -->
+    <div class="swiper-pagination-custom pagination-{{id}}" [hidden]="!showPagination"></div>
+  </div>
+
+  <!-- Custom Navigation -->
+  <button class="custom-nav-btn swiper-button-prev-custom prev-{{id}}" [hidden]="!navigationEnabled" aria-label="Previous slide" [class.show-nav]="isHovered">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  <button class="custom-nav-btn swiper-button-next-custom next-{{id}}" [hidden]="!navigationEnabled" aria-label="Next slide" [class.show-nav]="isHovered">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+</div>

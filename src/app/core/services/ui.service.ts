@@ -36,7 +36,7 @@ export interface BlogPost {
 })
 export class UiService {
   private isBrowser: boolean;
-  
+
   // Modal state
   private projectModalOpen = new BehaviorSubject<boolean>(false);
   private blogModalOpen = new BehaviorSubject<boolean>(false);
@@ -45,6 +45,7 @@ export class UiService {
   private mobileMenuOpen = new BehaviorSubject<boolean>(false);
   private upworkPopupOpen = new BehaviorSubject<boolean>(false);
   private portfolioSidebarOpen = new BehaviorSubject<boolean>(false);
+  private calendarModalOpen = new BehaviorSubject<boolean>(false);
 
   // Selected project/blog for modal display
   private selectedProject = new BehaviorSubject<Project | null>(null);
@@ -61,6 +62,7 @@ export class UiService {
   mobileMenuOpen$ = this.mobileMenuOpen.asObservable();
   upworkPopupOpen$ = this.upworkPopupOpen.asObservable();
   portfolioSidebarOpen$ = this.portfolioSidebarOpen.asObservable();
+  calendarModalOpen$ = this.calendarModalOpen.asObservable();
   selectedProject$ = this.selectedProject.asObservable();
   selectedBlogPost$ = this.selectedBlogPost.asObservable();
   selectedPreviewProject$ = this.selectedPreviewProject.asObservable();
@@ -159,6 +161,19 @@ export class UiService {
   }
 
   /**
+   * Calendar Modal
+   */
+  openCalendarModal(): void {
+    this.calendarModalOpen.next(true);
+    this.preventBodyScroll();
+  }
+
+  closeCalendarModal(): void {
+    this.calendarModalOpen.next(false);
+    this.allowBodyScroll();
+  }
+
+  /**
    * Selected Services (Hire Me)
    */
   toggleService(service: string): void {
@@ -190,7 +205,8 @@ export class UiService {
         this.projectModalOpen.value,
         this.blogModalOpen.value,
         this.hireMeModalOpen.value,
-        this.projectPreviewOpen.value
+        this.projectPreviewOpen.value,
+        this.calendarModalOpen.value
       ].some(open => open);
 
       if (!anyModalOpen) {

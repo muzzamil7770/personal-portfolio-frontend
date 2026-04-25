@@ -32,6 +32,10 @@ export class ToastService {
     this.show('error', title, message, 7000);
   }
 
+  info(title: string, message: string): void {
+    this.show('info', title, message);
+  }
+
   dismiss(id: number): void {
     this.toastsSubject.next(this.toastsSubject.value.filter(t => t.id !== id));
   }

@@ -5,4 +5,5 @@ dist/
 .DS_Store
 backend/node_modules/
 frontend/.angular/cache/...
-.angular/cache
+.angular
+.cache

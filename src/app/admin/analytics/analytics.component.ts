@@ -5,6 +5,7 @@ import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton.component';
+import { CookieService } from '../../core/services/cookie.service';
 
 interface LogEntry {
   id: string; sessionId: string; ip: string; page: string;
@@ -283,7 +284,10 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   private pollSub?: Subscription;
   private liveSub?: Subscription;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) {}
 
   ngOnInit() {
     this.load();
@@ -304,7 +308,7 @@ export class AnalyticsComponent implements OnInit, OnDestroy {
   }
 
   private fetchStats() {
-    const token = localStorage.getItem('admin_token') || '';
+    const token = this.cookieService.get('admin_token') || '';
     return this.http.get<{ success: boolean; data: StatsData }>(`${environment.apiUrl}/analytics/stats`, {
       headers: { Authorization: `Bearer ${token}` }
     });

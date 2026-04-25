@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { interval, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { CookieService } from './cookie.service';
 
 @Injectable({ providedIn: 'root' })
 export class VisitorTrackingService {
@@ -12,21 +13,23 @@ export class VisitorTrackingService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private http: HttpClient
+    private http: HttpClient,
+    private cookieService: CookieService
   ) {}
 
   init(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.sessionId = this.getOrCreateSession();
     this.track();
-    this.startHeartbeat();
+    this.sessionId = this.getOrCreateSession();
+    this.track();
   }
 
   private getOrCreateSession(): string {
-    let id = sessionStorage.getItem('_vsid');
+    let id = this.cookieService.get('_vsid');
     if (!id) {
       id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-      sessionStorage.setItem('_vsid', id);
+      this.cookieService.set('_vsid', id, 7);
     }
     return id;
   }
@@ -103,16 +106,6 @@ export class VisitorTrackingService {
     this.http.post(`${environment.apiUrl}/analytics/track`, payload).subscribe();
   }
 
-  private startHeartbeat(): void {
-    this.heartbeatSub = interval(30000).pipe(
-      switchMap(() => this.http.post(`${environment.apiUrl}/analytics/heartbeat`, {
-        sessionId: this.sessionId,
-        page: window.location.pathname
-      }))
-    ).subscribe();
-  }
-
   destroy(): void {
-    this.heartbeatSub?.unsubscribe();
   }
 }

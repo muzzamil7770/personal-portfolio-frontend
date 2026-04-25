@@ -19,6 +19,7 @@
   <app-toast></app-toast>
   <app-admin-panel-strip></app-admin-panel-strip>
   <app-portfolio-project-sidebar></app-portfolio-project-sidebar>
+  <app-calendar [isVisible]="showCalendar" (closed)="onCalendarClosed()"></app-calendar>
 </ng-container>
 
 <!-- Global Cooldown Overlay -->

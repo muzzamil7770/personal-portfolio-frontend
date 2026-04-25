@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../services/admin-api.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { CooldownService } from '../../core/services/cooldown.service';
+import { CookieService } from '../../core/services/cookie.service';
 
 interface FlowNode {
   id: string;
@@ -85,12 +86,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     public themeService: ThemeService,
     private cooldown: CooldownService,
+    private cookieService: CookieService,
     private el: ElementRef
   ) {}
 
   ngOnInit(): void {
     // Check for existing valid token
-    const token = localStorage.getItem('admin_token');
+    const token = this.cookieService.get('admin_token');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -99,8 +101,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
       } catch {}
-      localStorage.removeItem('admin_auth');
-      localStorage.removeItem('admin_token');
+      this.cookieService.delete('admin_auth');
+      this.cookieService.delete('admin_token');
     }
 
     this.initializeFlowDiagram();
@@ -518,8 +520,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tfaError = '';
         setTimeout(() => this.tfaInput?.nativeElement?.focus(), 100);
       } else if (response?.success && response.token) {
-        localStorage.setItem('admin_auth', 'true');
-        localStorage.setItem('admin_token', response.token);
+        this.cookieService.set('admin_auth', 'true', 1);
+        this.cookieService.set('admin_token', response.token, 1);
         this.router.navigate(['/admin/dashboard']);
       } else {
         this.error = response?.message || 'Login failed.';
@@ -548,8 +550,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     try {
       const response = await this.api.verify2FA(this.tfaCode).toPromise();
       if (response?.success && response.token) {
-        localStorage.setItem('admin_auth', 'true');
-        localStorage.setItem('admin_token', response.token);
+        this.cookieService.set('admin_auth', 'true', 1);
+        this.cookieService.set('admin_token', response.token, 1);
         this.show2FA = false;
         this.router.navigate(['/admin/dashboard']);
       } else {

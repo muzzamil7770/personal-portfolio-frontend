@@ -7,6 +7,7 @@
 @for (link of siteData.nav.links; track link.href; let i = $index) {
           <a [href]="link.href" [class.active]="i === activeLinkIndex()" class="nav-link">{{ link.label }}</a>
         }
+        <app-join-meeting-banner></app-join-meeting-banner>
         <a href="#hire" class="nav-link" id="hire-me-nav" (click)="openHireMeModal(); $event.preventDefault()" style="background: var(--primary); color: #ffffff; font-weight: 600;">
           {{ siteData.nav.hireMe.label }}
         </a>

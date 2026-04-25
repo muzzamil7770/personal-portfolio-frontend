@@ -31,6 +31,18 @@ export const adminRoutes: Routes = [
       {
         path: 'conversations',
         loadComponent: () => import('./conversations/conversations.component').then(m => m.ConversationsComponent)
+      },
+      {
+        path: 'calendar',
+        loadComponent: () => import('./calendar/calendar.component').then(m => m.AdminCalendarComponent)
+      },
+      {
+        path: 'video-call',
+        loadComponent: () => import('./video-call/meeting-management.component').then(m => m.MeetingManagementComponent)
+      },
+      {
+        path: 'video-call/:room',
+        loadComponent: () => import('./video-call/video-call.component').then(m => m.VideoCallComponent)
       }
     ]
   }

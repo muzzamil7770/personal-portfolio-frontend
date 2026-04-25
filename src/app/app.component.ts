@@ -21,6 +21,7 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 import { CooldownOverlayComponent } from './shared/components/cooldown-overlay/cooldown-overlay.component';
 import { AdminPanelStripComponent } from './shared/components/admin-panel-strip/admin-panel-strip.component';
 import { PortfolioProjectSidebarComponent } from './shared/components/portfolio-project-sidebar/portfolio-project-sidebar.component';
+import { CalendarComponent } from './shared/components/calendar/calendar.component';
 
 @Component({
   selector: 'app-root',
@@ -42,7 +43,8 @@ import { PortfolioProjectSidebarComponent } from './shared/components/portfolio-
     ToastComponent,
     CooldownOverlayComponent,
     AdminPanelStripComponent,
-    PortfolioProjectSidebarComponent
+    PortfolioProjectSidebarComponent,
+    CalendarComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -50,6 +52,7 @@ import { PortfolioProjectSidebarComponent } from './shared/components/portfolio-
 export class AppComponent implements OnInit, OnDestroy {
   siteData: SiteData;
   isAdmin = false;
+  showCalendar = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -72,6 +75,12 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe((e: any) => {
       this.isAdmin = e.urlAfterRedirects.startsWith('/admin');
     });
+
+    this.uiService.calendarModalOpen$.subscribe(show => this.showCalendar = show);
+  }
+
+  onCalendarClosed(): void {
+    this.uiService.closeCalendarModal();
   }
 
   ngOnDestroy(): void {

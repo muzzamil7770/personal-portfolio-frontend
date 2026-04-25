@@ -7,11 +7,13 @@ import { ApiService, ContactFormData } from '../../core/services/api.service';
 import { ToastService } from '../../core/services/toast.service';
 import { CvViewerComponent } from '../cv-viewer/cv-viewer.component';
 import { AiChatbotComponent } from '../../shared/components/ai-chatbot/ai-chatbot.component';
+import { MeetingRequestComponent } from '../../shared/components/meeting-request/meeting-request.component';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, CvViewerComponent, AiChatbotComponent],
+  imports: [CommonModule, ReactiveFormsModule, CvViewerComponent, AiChatbotComponent, MeetingRequestComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
@@ -21,6 +23,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   isBrowser: boolean;
   isSubmitting = false;
   showCvViewer = false;
+  showMeetingRequest = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -28,11 +31,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public uiService: UiService,
     private fb: FormBuilder,
     private apiService: ApiService,
-    private toast: ToastService
+    private toast: ToastService,
+    private notificationService: NotificationService
   ) {
     this.siteData = this.dataService.getData();
     this.isBrowser = isPlatformBrowser(this.platformId);
-    
+
     this.contactForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
@@ -41,7 +45,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
@@ -57,12 +61,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     let charIndex = 0;
     let isDeleting = false;
     const typedElement = document.getElementById('typed');
-    
+
     if (!typedElement) return;
 
     const type = () => {
       const currentString = strings[index];
-      
+
       if (isDeleting) {
         typedElement.textContent = currentString.substring(0, charIndex - 1);
         charIndex--;
@@ -151,6 +155,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
       this.toast.error('Invalid Form', 'Please fill in all required fields correctly.');
+      this.notificationService.addNotification(
+        'Form Validation Error', 
+        'Contact form submission failed due to invalid inputs.', 
+        'fas fa-exclamation-triangle', 
+        'system', 
+        'warning'
+      );
       return;
     }
 
@@ -166,9 +177,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
           "Thanks for reaching out. I'll get back to you within 24 hours."
         );
       },
-      error: (err: Error) => {
+      error: (err: any) => {
         this.isSubmitting = false;
-        this.toast.error('Failed to Send', err.message);
+        this.toast.error('Failed to Send', err.message || 'Server error');
+        this.notificationService.addNotification(
+          'Message Failed', 
+          `Contact message to "${formData.subject}" failed: ${err.message || 'Server error'}`, 
+          'fas fa-times-circle', 
+          'contact', 
+          'error'
+        );
       }
     });
   }
@@ -183,5 +201,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onCvViewerClosed(): void {
     this.showCvViewer = false;
+  }
+
+  openCalendarModal(): void {
+    this.uiService.openCalendarModal();
+  }
+
+  onMeetingRequestSubmitted(requestData: any): void {
+    // Here you would typically send the request to your backend
+    console.log('Meeting request submitted:', requestData);
+
+    // For now, we'll just show a success message
+    // In a real implementation, you'd send this to your server
+    this.notificationService.addNotification(
+      'Meeting Request Sent',
+      `Meeting request from ${requestData.name} has been sent successfully.`,
+      'fas fa-video',
+      'meeting',
+      'success'
+    );
   }
 }
